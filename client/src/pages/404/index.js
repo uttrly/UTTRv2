@@ -14,7 +14,7 @@ class Err extends React.Component {
       <MDBContainer className="text-center mt-5 pt-5 mainContainer">
           <MDBRow className="justify-content-center">
               <MDBCol md="5" sm="12">
-                <MDBBtn color="yellow accent-3" className="black-text" href="/">Opps! Page not found.<br />Click to return to main menu.</MDBBtn>
+                <MDBBtn color="yellow accent-3" className="black-text" href="/">It is unfortunate that you ended up here.<br />Click to return to main menu.</MDBBtn>
               </MDBCol>
           </MDBRow>
       </MDBContainer>

@@ -26,14 +26,20 @@ class FixedNavbar extends React.Component {
         <header>
           <MDBNavbar style={{ backgroundColor: "#212121" }} dark expand="md" scrolling fixed="top">
             <MDBNavbarBrand href="/">
-              <strong>Walk/Wait</strong>
+              <strong>UTTR</strong>
             </MDBNavbarBrand>
             <MDBNavbarToggler onClick={this.onClick} />
             <MDBCollapse isOpen={this.state.collapse} navbar>
               <MDBNavbarNav left>
+                <MDBNavItem className={window.location.pathname === "/" && "active"} onClick={this.toggleActive}>
+                  <MDBNavLink to="/" >Home</MDBNavLink>
+                </MDBNavItem>                
                 <MDBNavItem className={window.location.pathname === "/about" && "active"} onClick={this.toggleActive}>
                   <MDBNavLink to="/about" >About</MDBNavLink>
                 </MDBNavItem>
+              </MDBNavbarNav>
+              <MDBNavbarNav right>
+
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
