@@ -1,0 +1,57 @@
+.mainContainer {
+    min-height: calc(100vh - 147px);
+    /* position: relative; */
+}
+
+.walk {
+    /* position: absolute; */
+    background-color: rgb(27, 99, 58);
+    border: rgb(27, 99, 58);
+    font-size: x-large;
+    margin: 0px;
+    color: white;
+    /* height: 90%; */
+    min-height: calc(100vh - 195px);
+    width: 100%;
+    /* left: 0; */
+    /* top: 6%; */
+    /* z-index: 1100; */
+}
+
+.wait{
+    /* position: absolute; */
+    /* border-radius: 50%; */
+    background-color: #AA0114;
+    border: #AA0114;
+    margin: 0px;
+    color: white;
+    font-size: x-large;
+    /* height: 90%; */
+    min-height: calc(100vh - 195px);
+    width: 100%;
+    /* width: 400px;
+    height: 400px; */
+    /* left: 0;
+    top: 6%; */
+    /* z-index: 1100; */
+}
+
+.cab {
+    /* position: absolute; */
+    background-color: #ffea00;
+    border:  #ffea00;
+    font-size: x-large;
+    margin: 0px;
+    color: #212121;
+    /* height: 90%; */
+    min-height: calc(100vh - 195px);
+    width: 100%;
+    /* left: 0;
+    top: 6%;
+    z-index: 1100; */
+}
+
+#about {
+    color: white;
+    font-size: medium;
+}

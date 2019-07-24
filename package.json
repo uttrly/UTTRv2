@@ -1,0 +1,59 @@
+{
+  "name": "uttrv2",
+  "version": "1.0.0",
+  "description": "UTTR is a self-imporvement application that motivates users and help them track progres. This is the MERN stack version.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:prod": "node server.js",
+    "start:dev": "concurrently \"nodemon --ignore 'client/*'\" \"npm run client\"",
+    "client": "cd client && npm run start",
+    "install": "cd client && npm install",
+    "build": "cd client && npm run build",
+    "heroku-postbuild": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uttrly/UTTRv2.git"
+  },
+  "keywords": [
+    "MERN",
+    "MySQL",
+    "Sequelise",
+    "React",
+    "Node",
+    "Passport",
+    "JWT",
+    "Self-improvement",
+    "AWS",
+    "S3"
+  ],
+  "author": "Sharon Chien, Phouc Phan, Sarah Sakhri",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/uttrly/UTTRv2/issues"
+  },
+  "homepage": "https://github.com/uttrly/UTTRv2#readme",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "if-env": "^1.0.4",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^5.10.2",
+    "sparkpost": "^2.1.3"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^1.19.1"
+  }
+}
