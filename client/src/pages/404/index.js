@@ -3,11 +3,6 @@ import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css';
 
 class Err extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-    };
-  }
 
   render() {
     return(
