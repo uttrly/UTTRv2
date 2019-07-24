@@ -20,7 +20,7 @@ class Main extends React.Component {
               <hr/>
               <p>You want to be better? But your future self lets you down? We are here to help.</p>
               <br></br>
-              <MDBBtn color="warning">Learn More!</MDBBtn>
+              <MDBBtn color="warning" href="/about">Learn More!</MDBBtn>
             </MDBCol>
             <MDBCol>
               <img src={target} alt="logo" className="logoImg"></img>

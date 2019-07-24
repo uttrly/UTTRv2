@@ -35,7 +35,7 @@ class FixedNavbar extends React.Component {
                   <MDBNavLink to="/" >Home</MDBNavLink>
                 </MDBNavItem>
                 <MDBNavItem className={window.location.pathname === "/about" && "active"} onClick={this.toggleActive}>
-                  <MDBNavLink to="/about" >Team</MDBNavLink>
+                  <MDBNavLink to="/about" >About</MDBNavLink>
                 </MDBNavItem>                                
                 <MDBNavItem className={window.location.pathname === "/team" && "active"} onClick={this.toggleActive}>
                   <MDBNavLink to="/team" >Team</MDBNavLink>
