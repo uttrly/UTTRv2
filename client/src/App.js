@@ -9,6 +9,9 @@ import About from './pages/About'
 import Err from './pages/404'
 import Signin from './pages/Signin'
 import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import Challenge from './pages/Challenge'
+
 
 function App() {
   return (
@@ -20,7 +23,9 @@ function App() {
             <Route exact path="/team" component={TeamPage}/> 
             <Route exact path="/about" component={About}/>
             <Route exact path="/signin" component={Signin}/>
-            <Route exact path="/signup" component={Signup}/>     
+            <Route exact path="/signup" component={Signup}/>
+            <Route exact path="/dashboard" component={Dashboard}/>     
+            <Route exact path="/challenge" component={Challenge}/>     
             <Route component={Err} />       
           </Switch>
         <Footer />
