@@ -15,7 +15,7 @@ class Main extends React.Component {
       return(
         <MDBContainer className="text-center mt-5 pt-5 mainContainer">
           <MDBRow className="align-items-center">
-            <MDBCol size="md-4 sm-12" className="ml-auto">
+            <MDBCol md="4" sm="12" className="ml-auto">
               <h1>Be UTTR-ly Amazing</h1>
               <hr/>
               <p>You want to be better? But your future self lets you down? We are here to help.</p>
