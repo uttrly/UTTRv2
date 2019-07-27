@@ -1,16 +1,46 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css'
-import target from '../../image/target.jpg'
-
+import axios from 'axios'
 
 class Dashboard extends React.Component {
   constructor(props){
     super(props)
     this.state = {
+      isLoggedIn: false
     };
   }
 
+  componentDidMount() {
+    let accessString = localStorage.getItem('JWT')
+    console.log(accessString)
+    if (accessString === 'undefined') {
+      this.setState({
+        isLoading: false,
+        error: true
+      })
+    } else {
+
+      axios.get("/api/auth/user", {
+          headers: {
+            Authorization: `JWT ${accessString}`
+          }
+        })
+        .then((response) => {
+          console.log(response.data)
+
+          if (response.data.auth) {
+            console.log(`auth is ${response.data.auth}`)
+            console.log(this)
+            this.setState({
+              isLoggedIn: true
+            })
+          }
+
+        })
+        .catch(error => console.error(error))
+    }
+  }  
 
 
   render() {
