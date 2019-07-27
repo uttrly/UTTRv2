@@ -13,6 +13,7 @@ class Main extends React.Component {
 
   render() {
 <<<<<<< HEAD
+<<<<<<< HEAD
     return (
       <MDBContainer className="text-center mt-5 pt-5 mainContainer">
         <MDBRow className="align-items-center">
@@ -31,6 +32,8 @@ class Main extends React.Component {
     );
   }
 =======
+=======
+>>>>>>> master
       return(
         <MDBContainer className="text-center mt-5 pt-5 mainContainer">
           <MDBRow className="align-items-center">
@@ -48,6 +51,9 @@ class Main extends React.Component {
         </MDBContainer>
       );
     }
+<<<<<<< HEAD
+>>>>>>> master
+=======
 >>>>>>> master
 };
 

@@ -20,7 +20,6 @@ function App() {
     <Router>
       <div style={{ backgroundColor: "#FFFFFF" }}>
         <Nav />
-
 <<<<<<< HEAD
         <Switch>
           <Route exact path="/" component={Main} />
@@ -34,8 +33,18 @@ function App() {
           <Route component={Err} />
         </Switch>
 =======
-         
-
+          <Switch>
+            <Route exact path="/" component={Main}/>
+            <Route exact path="/team" component={TeamPage}/> 
+            <Route exact path="/about" component={About}/>
+            <Route exact path="/terms" component={Terms}/>
+            <Route exact path="/signin" component={Signin}/>
+            <Route exact path="/signup" component={Signup}/>
+            <Route exact path="/dashboard" component={Dashboard}/>     
+            <Route exact path="/challenge" component={Challenge}/>     
+            <Route component={Err} />       
+          </Switch>
+>>>>>>> master
         <Footer />
       </div>
     </Router>
