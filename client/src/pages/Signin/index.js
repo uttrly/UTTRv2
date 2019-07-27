@@ -66,14 +66,14 @@ class Signin extends React.Component {
   render(){
     if(!this.state.loggedIn) {
       return (
-        <MDBContainer className="mt-5 pt-5 mainContainer white-text">
+        <MDBContainer className="mt-5 pt-5 mainContainer">
           <MDBRow>
             <MDBCol md="6" className="mx-auto">
               <form>
-                <p className="h5 text-center mb-4 white-text">Sign In</p>
-                <div className="white-text">
+                <p className="h5 text-center mb-4">Sign In</p>
+                <div className="">
                   <MDBInput
-                    className="white-text"
+                    className=""
                     label="Type your email"
                     icon="envelope"
                     group
@@ -86,7 +86,7 @@ class Signin extends React.Component {
                     onChange={this.handleChange("email")}
                   />
                   <MDBInput
-                    className="white-text"
+                    className=""
                     label="Type your password"
                     icon="lock"
                     group
@@ -99,12 +99,12 @@ class Signin extends React.Component {
                 </div>
                 {this.state.showNullError && (
                   <div>
-                    <p className="white-text text-center">The username or password cannot be empty.</p>
+                    <p className="text-center">The username or password cannot be empty.</p>
                   </div>
                 )}
                 {this.state.showError && (
                   <div>
-                    <p className="white-text text-center">
+                    <p className="text-center">
                     That username or password isn&apos;t recognized. Please try again or register now. 
                     </p>
                     <MDBBtn href="/signup" size="sm" color="yellow accent-3" className="black-text">Register</MDBBtn>
@@ -112,17 +112,18 @@ class Signin extends React.Component {
 
                 )}
                 <div className="text-center">
-                  <MDBBtn color="yellow accent-3" className="black-text" onClick={(e)=>{this.loginUser(e)}}>Login</MDBBtn>
+                  <MDBBtn color="yellow accent-3" className="black-text" onClick={(e)=>{this.loginUser(e)}}>Sign in</MDBBtn>
                 </div>
+                <p className="font-small grey-text text-center">{`Not a member? `}
+                  <a href="/signup" style={{color:"#212121"}}>Sign Up</a>
+                </p>
               </form>
-              {/* <br></br>
-              <p className="text-center">Don't have an account? <a style={{color: "#ffea00"}} href="/signup">Sign up here.</a></p> */}
             </MDBCol>
           </MDBRow>
         </MDBContainer>
       );
     }
-    return <Redirect to={`/admin`} />
+    return <Redirect to={`/dashboard`} />
   }
 };
 
