@@ -19,36 +19,16 @@ class CreateGoal extends Component {
                             <div class="card-body">
                                 <h3 class="card-title text-center">Create a Challenge</h3>
                                 <form id="goalForm" >
-                                    <div class="form-group">
-                                        <label>Title : </label>
-                                        <input type="name" class="form-control" id="title" aria-describedby="goalTitle" placeholder="Enter Title" Required />
+                                    <div>
+                                        <h5><i>Please follow the given format when filling out your goal </i></h5>
+                                        <p> My goal is to "title" for "duration" starting on "start date"</p>
+                                        <p> Example : My goal is to run everyday for 10 weeks starting on october 18, 2020. </p>
+
                                     </div>
-                                    <div class="form-group">
-                                        <label>Description : </label>
-                                        <textarea class="form-control" id="description" Required></textarea>
-                                    </div>
-                                    <fieldset class="form-group">
-                                        <div class="row">
-                                            <legend class="col-form-label col-md-3 pt-0">Commitment Type : </legend>
-                                            <div class="form-check col-md-2">
-                                                <input class="form-check-input" type="radio" name="goalType" id="onGoing" value="false" checked />
-                                                <label class="form-check-label">On Going</label>
-                                            </div>
-                                            <div class="form-check col-md-2">
-                                                <input class="form-check-input" type="radio" name="goalType" id="oneShot" value="true" />
-                                                <label class="form-check-label">One Shot</label>
-                                            </div>
-                                        </div>
-                                    </fieldset>
 
                                     <div class="form-group">
-                                        <label for="inputStartDate">Start Date :</label>
-                                        <input class="form-control" type="date" id="startDate" Required />
-                                    </div>
-
-                                    <div class="form-group" id="durationField" >
-                                        <label for="duration">Duration :</label>
-                                        <input class="form-control" type="number" placeholder="(in weeks)" id="duration" value="0" />
+                                        <label>Goal : </label>
+                                        <textarea class="form-control" id="description" Required placeholder="My goal is to run everyday for 10 weeks starting on october 18, 2020."></textarea>
                                     </div>
 
                                     <div class="form-group">

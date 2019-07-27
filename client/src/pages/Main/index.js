@@ -12,12 +12,10 @@ class Main extends React.Component {
   }
 
   render() {
-<<<<<<< HEAD
-<<<<<<< HEAD
     return (
       <MDBContainer className="text-center mt-5 pt-5 mainContainer">
         <MDBRow className="align-items-center">
-          <MDBCol size="md-4 sm-12" className="ml-auto">
+          <MDBCol md="4" sm="12" className="ml-auto">
             <h1>Be UTTR-ly Amazing</h1>
             <hr />
             <p>You want to be better? But your future self lets you down? We are here to help.</p>
@@ -31,30 +29,6 @@ class Main extends React.Component {
       </MDBContainer>
     );
   }
-=======
-=======
->>>>>>> master
-      return(
-        <MDBContainer className="text-center mt-5 pt-5 mainContainer">
-          <MDBRow className="align-items-center">
-            <MDBCol md="4" sm="12" className="ml-auto">
-              <h1>Be UTTR-ly Amazing</h1>
-              <hr/>
-              <p>You want to be better? But your future self lets you down? We are here to help.</p>
-              <br></br>
-              <MDBBtn color="warning" href="/about">Learn More!</MDBBtn>
-            </MDBCol>
-            <MDBCol>
-              <img src={target} alt="logo" className="logoImg"></img>
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
-      );
-    }
-<<<<<<< HEAD
->>>>>>> master
-=======
->>>>>>> master
 };
 
 export default Main
