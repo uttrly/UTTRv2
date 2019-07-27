@@ -3,96 +3,130 @@ const db = require("../models");
 const axios = require("axios");
 const SparkPost = require('sparkpost');
 const client = new SparkPost("2b862987dfc382161bbc77bf1bf8d6773db93dba");
+const passport = require('passport')
+const jwtSecret = require('../config/passport/jwtConfig')
+const jwt = require('jsonwebtoken')
+
 
 // Defining methods for the appController
 module.exports = {
-    dashboard : (req, res) => {
-        // return (res.json("Testing"))
-        switch (req.params.status) {
-            case "referee":
-                runSearch(req.user.id, 0, "Referee")
-                break;
-            case "complete":
-                runSearch(req.user.id, 1, "Owner")
-                break;
-            default:
-                runSearch(req.user.id, 0, "Owner")
-        }
-    
-        function runSearch(id, status, relationship) {
-            db.user.findAll({
-                attributes: [],
-                where: {
-                    Id: id
-                },
-                include: [{
-                    model: db.Goal,
-                    where: {
-                        status: status
-                    },
-                    through: {
+    dashboard : (req, res,next) => {
+        // console.log(req)
+        passport.authenticate('jwt', {session: false}, (err, user, info) => {
+            console.log(`sent to passport jwt`)
+            if (err) {
+                console.log(`find user error message`)
+                console.log(err)
+            }
+            if (info !== undefined) {
+                console.log('this is findUser info.msg')
+                console.log(info.message)
+                res.send(info.message)
+            } else {
+                console.log('User found in db from route')
+                // res.status(200).send({
+                //     auth: true,
+                //     id: user.id,
+                //     email: user.email,
+                //     message: 'User found in db.'
+                // })
+
+
+                switch (req.params.status) {
+                    case "referee":
+                        runSearch(user.id, 0, "Referee")
+                        break;
+                    case "complete":
+                        runSearch(user.id, 1, "Owner")
+                        break;
+                    default:
+                        runSearch(user.id, 0, "Owner")
+                }
+            
+                function runSearch(id, status, relationship) {
+                    db.User.findAll({
+                        attributes: [],
                         where: {
-                            UserId: req.user.id,
-                            relationship: relationship
+                            Id: id
+                        },
+                        include: [{
+                            model: db.Goal,
+                            where: {
+                                status: status
+                            },
+                            through: {
+                                where: {
+                                    UserId: id,
+                                    relationship: relationship
+                                }
+            
+                            }
+                        }],
+                        raw: true
+                    }).then(function (data) {
+            
+                        var dataArray = [];
+                        var owner;
+                        if (relationship === "Owner") {
+                            owner = 1
                         }
-    
-                    }
-                }],
-                raw: true
-            }).then(function (data) {
-    
-                var dataArray = [];
-                var owner;
-                if (relationship === "Owner") {
-                    owner = 1
-                }
-                for (var i = 0; i < data.length; i++) {
-    
-                    var duration = data[i]["Goals.duration"]
-                    var startDate = new Date(data[i]["Goals.startDate"]);
-    
-                    //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
-    
-                    var diffWeek = calculateWeek(startDate);
-    
-                    var object = {
-                        id: data[i]["Goals.id"],
-                        name: data[i]["Goals.goalName"],
-                        description: data[i]["Goals.description"],
-                        createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
-                        duration: diffWeek + "/" + duration
-                    }
-                    dataArray.push(object)
-                }
-    
-                var hbsObject = {
-                    goals: dataArray,
-                    userName: req.user.firstName + " " + req.user.lastName,
-                    owner: owner
-                };
-    
-                db.user.findAll({
-                    attributes: {
-                        include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
-                    },
-                    where: {
-                        Id: id
-                    },
-                    include: [{
-                        model: db.Goal,
-                        through: {
-                            where: { UserId: req.user.id, relationship: "Owner" }
+                        for (var i = 0; i < data.length; i++) {
+            
+                            var duration = data[i]["Goals.duration"]
+                            var startDate = new Date(data[i]["Goals.startDate"]);
+            
+                            //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
+            
+                            var diffWeek = calculateWeek(startDate);
+            
+                            var object = {
+                                id: data[i]["Goals.id"],
+                                name: data[i]["Goals.goalName"],
+                                description: data[i]["Goals.description"],
+                                createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
+                                duration: diffWeek + "/" + duration
+                            }
+                            dataArray.push(object)
                         }
-                    }], raw: true
-                }).then(function (results) {
-                    console.log(results[0].points)
-                    hbsObject.points = results[0].points;
-                    console.log(hbsObject)
-                    res.json('dashboard', hbsObject)
-                })
-    
-            });
-        }
+            
+                        var hbsObject = {
+                            goals: dataArray,
+                            // userName: req.user.firstName + " " + req.user.lastName,
+                            owner: owner
+                        };
+            
+                        db.User.findAll({
+                            attributes: {
+                                include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
+                            },
+                            where: {
+                                Id: id
+                            },
+                            include: [{
+                                model: db.Goal,
+                                through: {
+                                    where: { UserId: id, relationship: "Owner" }
+                                }
+                            }], raw: true
+                        }).then(function (results) {
+                            console.log(results[0].points)
+                            hbsObject.points = results[0].points;
+                            console.log(hbsObject)
+                            res.json(hbsObject)
+                        })
+            
+                    });
+                }
+
+
+
+
+
+                return(console.log(user))
+            }
+        })(req, res, next)
+        // return (console.log(req));
+        
     }
 };
 
@@ -116,7 +150,7 @@ const challenge = (req, res) => {
         var oneTime = data[0].oneTime
         var report = []
 
-        var userId = req.user.id
+        var userId = user.id
 
         var duration = parseInt(data[0]["duration"])
         var startDate = new Date(data[0]["startDate"]);
@@ -228,7 +262,7 @@ const challenge = (req, res) => {
 }
 
 const report = (req, res) => {
-    var userId = req.user.id
+    var userId = user.id
     var userEmail = req.user.email
     var success = req.body.success
     var goalId = req.body.goalId
@@ -369,7 +403,7 @@ const newChallenge = (req, res) => {
             console.log(`goal added`)
             var relationshipData = {
                 GoalId: goal.dataValues.id,
-                UserId: req.user.id,
+                UserId: user.id,
                 relationship: "Owner"
             }
             db.userGoals.create(relationshipData)
@@ -393,7 +427,7 @@ const addRefToUserGoals = (req, res, next) => {
         data.forEach(element => {
             var userGoalData = {
                 GoalId: element.dataValues.id,
-                UserId: req.user.id,
+                UserId: user.id,
                 relationship: "Referee"
             }
 

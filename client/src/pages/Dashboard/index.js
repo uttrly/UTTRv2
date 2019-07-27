@@ -17,40 +17,51 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.dashboard("");
+    // this.dashboard("");
     let accessString = localStorage.getItem('JWT')
+    console.log("testing_____")
     console.log(accessString)
-    if (accessString === 'undefined') {
+    if (accessString === 'undefined' | accessString === null) {
       this.setState({
         isLoading: false,
         error: true
       })
+
+      this.props.history.push("/signin");
+
     } else {
 
-      axios.get("/api/auth/user", {
-          headers: {
-            Authorization: `JWT ${accessString}`
-          }
-        })
-        .then((response) => {
-          console.log(response.data)
+this.dashboard("",accessString)
 
-          if (response.data.auth) {
-            console.log(`auth is ${response.data.auth}`)
-            console.log(this)
-            this.setState({
-              isLoggedIn: true
-            })
-          }
+      // axios.get("/api/auth/user", {
+      //     headers: {
+      //       Authorization: `JWT ${accessString}`
+      //     }
+      //   })
+      //   .then((response) => {
+      //     console.log(response.data)
 
-        })
-        .catch(error => console.error(error))
+      //     if (response.data.auth) {
+      //       console.log(`auth is ${response.data.auth}`)
+      //       console.log(this)
+      //       this.setState({
+      //         isLoggedIn: true
+      //       })
+      //     }
+
+      //   })
+      //   .catch(error => console.error(error))
     }
   }  
 
 
-dashboard = (status) => {
-  API.dashboard(status)
+dashboard = (status,header) => {
+  console.log(header)
+  API.dashboard(status, {
+    headers: {
+      Authorization: `JWT ${header}`
+    }
+  })
       .then(res =>
           //   this.setState({
           //     image: res.data.message

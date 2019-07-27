@@ -12,7 +12,7 @@ export default {
   //   return axios.get(`/api/app/search/${route}/${originStopId}/${destinationStopId}/${terminal}/${previous}`)
   // },
 
-  dashboard: (status) => {
-    return axios.get(`/api/app/dashboard`)
+  dashboard: (status,header) => {
+    return axios.get(`/api/app/dashboard`,header)
   }
 };
