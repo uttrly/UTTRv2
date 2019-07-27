@@ -1,11 +1,11 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
+import { MDBContainer, MDBRow, MDBCol, MDBBtn } from 'mdbreact';
 import '../pageStyle.css'
 import target from '../../image/target.jpg'
 
 
 class Main extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
     };
