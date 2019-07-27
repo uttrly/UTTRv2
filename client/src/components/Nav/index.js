@@ -40,9 +40,33 @@ class FixedNavbar extends React.Component {
                 <MDBNavItem className={window.location.pathname === "/team" && "active"} onClick={this.toggleActive}>
                   <MDBNavLink to="/team" >Team</MDBNavLink>
                 </MDBNavItem>
+                {this.props.isLoggedIn && (
+                  <MDBNavItem className={window.location.pathname === "/team" && "active"} onClick={this.toggleActive}>
+                    <MDBNavLink to="/dashboard" >Goals</MDBNavLink>
+                  </MDBNavItem>
+                )}
               </MDBNavbarNav>
               <MDBNavbarNav right>
-
+              <MDBNavItem>
+                <MDBDropdown>
+                  <MDBDropdownToggle nav caret>
+                    <div className="d-none d-md-inline">
+                    <MDBIcon icon="user-circle" style={{fontSize:"1.5rem"}} />
+                    {this.props.isLoggedIn && ` ${this.props.email}`}
+                    </div>
+                  </MDBDropdownToggle>
+                  <MDBDropdownMenu right>
+                    {this.props.isLoggedIn? (
+                    <MDBDropdownItem href="/logout">Sign Out</MDBDropdownItem>
+                    ) : (
+                    <div>
+                      <MDBDropdownItem href="/signup">Sign Up</MDBDropdownItem>
+                      <MDBDropdownItem href="/signin">Sign In</MDBDropdownItem>
+                    </div>  
+                    )}
+                  </MDBDropdownMenu>
+                </MDBDropdown>
+              </MDBNavItem>
               </MDBNavbarNav>
             </MDBCollapse>
           </MDBNavbar>
