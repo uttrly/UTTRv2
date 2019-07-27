@@ -6,95 +6,97 @@ const client = new SparkPost("2b862987dfc382161bbc77bf1bf8d6773db93dba");
 
 // Defining methods for the appController
 module.exports = {
-};
-
-const dashboard = (req, res) => {
-    switch (req.params.status) {
-        case "referee":
-            runSearch(req.user.id, 0, "Referee")
-            break;
-        case "complete":
-            runSearch(req.user.id, 1, "Owner")
-            break;
-        default:
-            runSearch(req.user.id, 0, "Owner")
-    }
-
-    function runSearch(id, status, relationship) {
-        db.user.findAll({
-            attributes: [],
-            where: {
-                Id: id
-            },
-            include: [{
-                model: db.Goal,
-                where: {
-                    status: status
-                },
-                through: {
-                    where: {
-                        UserId: req.user.id,
-                        relationship: relationship
-                    }
-
-                }
-            }],
-            raw: true
-        }).then(function (data) {
-
-            var dataArray = [];
-            var owner;
-            if (relationship === "Owner") {
-                owner = 1
-            }
-            for (var i = 0; i < data.length; i++) {
-
-                var duration = data[i]["Goals.duration"]
-                var startDate = new Date(data[i]["Goals.startDate"]);
-
-                //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
-
-                var diffWeek = calculateWeek(startDate);
-
-                var object = {
-                    id: data[i]["Goals.id"],
-                    name: data[i]["Goals.goalName"],
-                    description: data[i]["Goals.description"],
-                    createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
-                    duration: diffWeek + "/" + duration
-                }
-                dataArray.push(object)
-            }
-
-            var hbsObject = {
-                goals: dataArray,
-                userName: req.user.firstName + " " + req.user.lastName,
-                owner: owner
-            };
-
+    dashboard : (req, res) => {
+        // return (res.json("Testing"))
+        switch (req.params.status) {
+            case "referee":
+                runSearch(req.user.id, 0, "Referee")
+                break;
+            case "complete":
+                runSearch(req.user.id, 1, "Owner")
+                break;
+            default:
+                runSearch(req.user.id, 0, "Owner")
+        }
+    
+        function runSearch(id, status, relationship) {
             db.user.findAll({
-                attributes: {
-                    include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
-                },
+                attributes: [],
                 where: {
                     Id: id
                 },
                 include: [{
                     model: db.Goal,
+                    where: {
+                        status: status
+                    },
                     through: {
-                        where: { UserId: req.user.id, relationship: "Owner" }
+                        where: {
+                            UserId: req.user.id,
+                            relationship: relationship
+                        }
+    
                     }
-                }], raw: true
-            }).then(function (results) {
-                console.log(results[0].points)
-                hbsObject.points = results[0].points;
-                console.log(hbsObject)
-                res.render('dashboard', hbsObject)
-            })
-
-        });
+                }],
+                raw: true
+            }).then(function (data) {
+    
+                var dataArray = [];
+                var owner;
+                if (relationship === "Owner") {
+                    owner = 1
+                }
+                for (var i = 0; i < data.length; i++) {
+    
+                    var duration = data[i]["Goals.duration"]
+                    var startDate = new Date(data[i]["Goals.startDate"]);
+    
+                    //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
+    
+                    var diffWeek = calculateWeek(startDate);
+    
+                    var object = {
+                        id: data[i]["Goals.id"],
+                        name: data[i]["Goals.goalName"],
+                        description: data[i]["Goals.description"],
+                        createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
+                        duration: diffWeek + "/" + duration
+                    }
+                    dataArray.push(object)
+                }
+    
+                var hbsObject = {
+                    goals: dataArray,
+                    userName: req.user.firstName + " " + req.user.lastName,
+                    owner: owner
+                };
+    
+                db.user.findAll({
+                    attributes: {
+                        include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
+                    },
+                    where: {
+                        Id: id
+                    },
+                    include: [{
+                        model: db.Goal,
+                        through: {
+                            where: { UserId: req.user.id, relationship: "Owner" }
+                        }
+                    }], raw: true
+                }).then(function (results) {
+                    console.log(results[0].points)
+                    hbsObject.points = results[0].points;
+                    console.log(hbsObject)
+                    res.json('dashboard', hbsObject)
+                })
+    
+            });
+        }
     }
-}
+};
+
+
 
 
 

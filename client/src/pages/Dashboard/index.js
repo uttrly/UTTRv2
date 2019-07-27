@@ -2,15 +2,33 @@ import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css'
 import target from '../../image/target.jpg'
+import API from "../../utils/API";
+
 
 
 class Dashboard extends React.Component {
   constructor(props){
     super(props)
     this.state = {
+        goal: {}
     };
   }
 
+  componentDidMount() {
+    this.dashboard("");
+  }
+
+
+  dashboard = (status) => {
+    API.dashboard(status)
+        .then(res =>
+            //   this.setState({
+            //     image: res.data.message
+            //   })
+            console.log(res)
+        )
+        .catch(err => console.log(err));
+};
 
 
   render() {
