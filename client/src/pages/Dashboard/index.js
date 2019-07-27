@@ -5,29 +5,59 @@ import target from '../../image/target.jpg'
 import API from "../../utils/API";
 
 
+import axios from 'axios'
 
 class Dashboard extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-        goal: {}
+        goal: {},
+      isLoggedIn: false
     };
   }
 
   componentDidMount() {
     this.dashboard("");
-  }
+    let accessString = localStorage.getItem('JWT')
+    console.log(accessString)
+    if (accessString === 'undefined') {
+      this.setState({
+        isLoading: false,
+        error: true
+      })
+    } else {
+
+      axios.get("/api/auth/user", {
+          headers: {
+            Authorization: `JWT ${accessString}`
+          }
+        })
+        .then((response) => {
+          console.log(response.data)
+
+          if (response.data.auth) {
+            console.log(`auth is ${response.data.auth}`)
+            console.log(this)
+            this.setState({
+              isLoggedIn: true
+            })
+          }
+
+        })
+        .catch(error => console.error(error))
+    }
+  }  
 
 
-  dashboard = (status) => {
-    API.dashboard(status)
-        .then(res =>
-            //   this.setState({
-            //     image: res.data.message
-            //   })
-            console.log(res)
-        )
-        .catch(err => console.log(err));
+dashboard = (status) => {
+  API.dashboard(status)
+      .then(res =>
+          //   this.setState({
+          //     image: res.data.message
+          //   })
+          console.log(res)
+      )
+      .catch(err => console.log(err));
 };
 
 
