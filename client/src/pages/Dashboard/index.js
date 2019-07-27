@@ -56,7 +56,7 @@ this.dashboard("",accessString)
 
 
 dashboard = (status,header) => {
-  console.log(header)
+  // console.log(header)
   API.dashboard(status, {
     headers: {
       Authorization: `JWT ${header}`
