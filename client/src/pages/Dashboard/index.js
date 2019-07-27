@@ -12,6 +12,7 @@ class Dashboard extends React.Component {
     super(props)
     this.state = {
         goal: {},
+        point: 0,
         isLoggedIn: false
     };
   }
@@ -66,7 +67,12 @@ dashboard = (status,header) => {
           //   this.setState({
           //     image: res.data.message
           //   })
-          console.log(res)
+          //console.log(res)
+
+          this.setState({
+            goal: res.goals,
+            point: res.points
+          })
       )
       .catch(err => console.log(err));
 };
@@ -78,6 +84,7 @@ dashboard = (status,header) => {
         cursor:"pointer"
       }
 
+      console.log(this.state.point)
       return(
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -95,7 +102,7 @@ dashboard = (status,header) => {
                         <div className="row">
                         <div className="col-sm-3"><i className="fas fa-bolt fa-5x"></i></div>
                         <div className="col-sm-9 text-right">
-                            <div className="account-points-earned huge text-right">PlaceHOLDER</div>
+                            <div className="account-points-earned huge text-right">{this.state.point}</div>
                             <div>Earned Points!</div>
                             <h6>Click to enter to win a car</h6>
                         </div>
