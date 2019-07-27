@@ -12,7 +12,7 @@ class Dashboard extends React.Component {
     super(props)
     this.state = {
         goal: {},
-      isLoggedIn: false
+        isLoggedIn: false
     };
   }
 
