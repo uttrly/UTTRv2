@@ -1,45 +1,16 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css'
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import axios from 'axios'
 
 class Dashboard extends React.Component {
   constructor(props){
     super(props)
-    this.state = {
-      isLoggedIn: false
-    };
   }
 
   componentDidMount() {
-    let accessString = localStorage.getItem('JWT')
-    console.log(accessString)
-    if (accessString === 'undefined') {
-      this.setState({
-        isLoading: false,
-        error: true
-      })
-    } else {
-
-      axios.get("/api/auth/user", {
-          headers: {
-            Authorization: `JWT ${accessString}`
-          }
-        })
-        .then((response) => {
-          console.log(response.data)
-
-          if (response.data.auth) {
-            console.log(`auth is ${response.data.auth}`)
-            console.log(this)
-            this.setState({
-              isLoggedIn: true
-            })
-          }
-
-        })
-        .catch(error => console.error(error))
-    }
   }  
 
 
@@ -48,6 +19,14 @@ class Dashboard extends React.Component {
     let style = {
         cursor:"pointer"
       }
+
+    const {user} = this.props.auth 
+    // this is the user object that can be used for interacting w/ db
+    // example of user object:
+    // user: {
+    //   id: 1,
+    //   email: 'sharon@gmail.com'
+    // } 
 
       return(
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
@@ -133,4 +112,13 @@ class Dashboard extends React.Component {
     }
 };
 
-export default Dashboard
+Dashboard.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps
+)(Dashboard);

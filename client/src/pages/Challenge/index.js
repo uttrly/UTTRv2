@@ -1,7 +1,8 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css'
-import target from '../../image/target.jpg'
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 
 class Challenge extends React.Component {
@@ -18,6 +19,9 @@ class Challenge extends React.Component {
     let style = {
         width:"70%"
       }
+
+    const {user} = this.props.auth 
+
 
       return(
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
@@ -91,4 +95,13 @@ class Challenge extends React.Component {
     }
 };
 
-export default Challenge
+Challenge.propTypes = {
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps
+)(Challenge);

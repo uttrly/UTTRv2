@@ -2,6 +2,10 @@ import React from "react";
 import { Redirect } from 'react-router-dom';
 import { MDBContainer, MDBRow, MDBCol, MDBInput, MDBBtn } from 'mdbreact';
 import axios from 'axios';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { loginUser } from "../../actions/authActions";
+import classnames from "classnames";
 
 class Signin extends React.Component {
   constructor() {
@@ -13,8 +17,28 @@ class Signin extends React.Component {
       loggedIn: false,
       showError: false,
       showNullError: false,
+      errors: {}
     };
   }
+
+  componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/dashboard"); // push user to dashboard when they login
+    }
+    if (nextProps.errors) {
+        this.setState({
+          errors: nextProps.errors
+        });
+    }
+
+  }
+
 
   handleChange = name => (event) => {
     this.setState({
@@ -24,107 +48,87 @@ class Signin extends React.Component {
 
   loginUser = async (e) => {
     e.preventDefault();
-    const {
-      email,
-      password
-    } = this.state;
-    if (email === '' || password === '') {
-      this.setState({
-        showError: false,
-        showNullError: true,
-        loggedIn: false,
-      });
-    } else {
-      try {
-        const response = await axios.post('/api/auth/signin', {
-          email,
-          password,
-        });
-        console.log(response.data)
-        localStorage.setItem('JWT', response.data.token);
-        this.setState({
-          loggedIn: true,
-          showError: false,
-          showNullError: false,
-        });
-      } catch (error) {
-        console.error(error.response.data);
-        if (
-          error.response.data === 'bad username' ||
-          error.response.data === 'passwords do not match'
-        ) {
-          this.setState({
-            showError: true,
-            showNullError: false,
-          });
-        }
-      }
-    }
+
+    const userData = {
+      email: this.state.email,
+      password: this.state.password
+    };
+
+    this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
+
   };
 
 
-  render(){
-    if(!this.state.loggedIn) {
-      return (
-        <MDBContainer className="mt-5 pt-5 mainContainer">
-          <MDBRow>
-            <MDBCol md="6" className="mx-auto">
-              <form>
-                <p className="h5 text-center mb-4">Sign In</p>
-                <div className="">
-                  <MDBInput
-                    className=""
-                    label="Type your email"
-                    icon="envelope"
-                    group
-                    type="email"
-                    validate
-                    error="wrong"
-                    success="right"
-                    id="email"
-                    value={this.state.email}
-                    onChange={this.handleChange("email")}
-                  />
-                  <MDBInput
-                    className=""
-                    label="Type your password"
-                    icon="lock"
-                    group
-                    type="password"
-                    validate
-                    id="password"
-                    value={this.state.password}
-                    onChange={this.handleChange("password")}
-                  />
-                </div>
-                {this.state.showNullError && (
-                  <div>
-                    <p className="text-center">The username or password cannot be empty.</p>
-                  </div>
-                )}
-                {this.state.showError && (
-                  <div>
-                    <p className="text-center">
-                    That username or password isn&apos;t recognized. Please try again or register now. 
-                    </p>
-                    <MDBBtn href="/signup" size="sm" color="yellow accent-3" className="black-text">Register</MDBBtn>
-                  </div>
+  render () {
+    const { errors } = this.state
 
-                )}
-                <div className="text-center">
-                  <MDBBtn color="yellow accent-3" className="black-text" onClick={(e)=>{this.loginUser(e)}}>Sign in</MDBBtn>
-                </div>
-                <p className="font-small grey-text text-center">{`Not a member? `}
-                  <a href="/signup" style={{color:"#212121"}}>Sign Up</a>
-                </p>
-              </form>
-            </MDBCol>
-          </MDBRow>
-        </MDBContainer>
-      );
-    }
-    return <Redirect to={`/dashboard`} />
+    return (
+      <MDBContainer className="mt-5 pt-5 mainContainer">
+        <MDBRow>
+          <MDBCol md="6" className="mx-auto">
+            <form>
+              <p className="h5 text-center mb-4">Sign In</p>
+              <div className="">
+                <MDBInput
+                  className={classnames("",{invalid: errors.email || errors.emailnotfound})}
+                  label="Type your email"
+                  icon="envelope"
+                  group
+                  type="email"
+                  validate
+                  error={errors.email}
+                  success="right"
+                  id="email"
+                  value={this.state.email}
+                  onChange={this.handleChange("email")}
+                />
+                <span className="red-text">
+                  {errors.email}
+                  {errors.emailnotfound}
+                </span>  
+                <MDBInput
+                  className={classnames("", {invalid: errors.password || errors.passwordincorrect})}
+                  label="Type your password"
+                  icon="lock"
+                  group
+                  type="password"
+                  validate
+                  id="password"
+                  error={errors.password}
+                  value={this.state.password}
+                  onChange={this.handleChange("password")}
+                />
+                <span className="red-text">
+                  {errors.password}
+                  {errors.emailnotfoundpasswordincorrect}
+                </span>                  
+              </div>
+              <div className="text-center">
+                <MDBBtn color="yellow accent-3" className="black-text" onClick={(e)=>{this.loginUser(e)}}>Sign in</MDBBtn>
+              </div>
+              <p className="font-small grey-text text-center">{`Not a member? `}
+                <a href="/signup" style={{color:"#212121"}}>Sign Up</a>
+              </p>
+            </form>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
+    );
   }
 };
 
-export default Signin;
+Signin.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Signin);
