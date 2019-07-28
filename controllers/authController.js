@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 
 module.exports = {
     signup: (req, res, next) => {
+        console.log(`triggered signed up route`)
         passport.authenticate('register', (err, user, info) => {
             if (err){
                 console.log(err)
@@ -27,7 +28,7 @@ module.exports = {
                             email: data.email
                         }).then(()=> {
                             console.log('User created in db.')
-                            res.status(200).send({message: `${req.body.email} is created as an admin.`})
+                            res.status(200).send({message: `${req.body.email} is created as an user.`})
                         })
                     })
                 })
