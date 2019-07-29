@@ -3,12 +3,19 @@ const passport = require('passport')
 const jwtSecret = require('../config/passport/jwtConfig')
 const jwt = require('jsonwebtoken')
 
+const validateSignUpInfo = require('../validation/signup')
+const validateSignInInfo = require('../validation/signin')
+
 module.exports = {
     signup: (req, res, next) => {
         console.log(`triggered signed up route`)
+        const {errors, isValid} = validateSignUpInfo(req.body)
+        if (!isValid) {
+            return res.status(400).json(errors)
+        }        
         passport.authenticate('register', (err, user, info) => {
             if (err){
-                console.log(err)
+                return res.status(400).json(err)
             }
             if(info !== undefined){
                 console.log(info.message)
@@ -36,9 +43,14 @@ module.exports = {
         })(req, res, next)
     },
     signin: (req, res, next) => {
+        console.log(`triggered signed in route`)
+        const {errors, isValid} = validateSignInInfo(req.body)
+        if (!isValid) {
+            return res.status(400).json(errors)
+        }
         passport.authenticate('login', (err, user, info) => {
             if (err) {
-                console.log(err)
+                return res.status(400).json(err)
             }
             if(info !== undefined){
                 console.log("info !== undefined")

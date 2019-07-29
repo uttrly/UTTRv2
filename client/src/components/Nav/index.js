@@ -64,7 +64,8 @@ class FixedNavbar extends React.Component {
                     {isAuthenticated? (
                     <div>
                       <MDBDropdownItem href="/dashboard">My Goals</MDBDropdownItem>
-                      <MDBDropdownItem href="/createGoal">New Goal</MDBDropdownItem>
+                      <MDBDropdownItem href="/createGoal">Add New Goals</MDBDropdownItem>
+                      <hr style={{margin:"0"}}/>
                       <MDBDropdownItem href="/logout" onClick={this.onSignoutClick}>Sign Out</MDBDropdownItem>
                     </div>    
                     ) : (
