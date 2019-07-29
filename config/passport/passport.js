@@ -24,23 +24,18 @@ passport.use(
             email: email
           }
         }).then(user => {
-          if (user !== null) {
-            console.log('You have already registered with this Email.')
-            return done(null, false, {message: 'Already registered using this email.'})
-          } else {
-            console.log(`passport user 1 ${user}`)
-            bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
-            .then(hashedPassword => {
-              db.User.create({
-                email: email,
-                password: hashedPassword
-              })
-              .then(user => {
-                console.log('user created')
-                return done(null, user)
-              })
+          console.log(`passport user 1 ${user}`)
+          bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
+          .then(hashedPassword => {
+            db.User.create({
+              email: email,
+              password: hashedPassword
             })
-          }
+            .then(user => {
+              console.log('user created')
+              return done(null, user)
+            })
+          })
         })
       } catch (err){
         done(err)

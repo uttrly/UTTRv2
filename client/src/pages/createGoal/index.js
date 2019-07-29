@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
+import '../pageStyle.css'
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 
 
 class CreateGoal extends Component {
@@ -10,6 +13,9 @@ class CreateGoal extends Component {
     }
 
     render() {
+    
+        const {user} = this.props.auth 
+        
         return (
 
             <MDBContainer className="mt-5 pt-5 mainContainer">
@@ -53,4 +59,14 @@ class CreateGoal extends Component {
 }
 
 
-export default CreateGoal;
+CreateGoal.propTypes = {
+    auth: PropTypes.object.isRequired
+  };
+  
+  const mapStateToProps = state => ({
+    auth: state.auth
+  });
+  
+  export default connect(mapStateToProps
+  )(CreateGoal);
+  
