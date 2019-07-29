@@ -1,14 +1,13 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
 import '../pageStyle.css';
-import graph from '../../image/chart.png'
 
 class About extends React.Component {
 
   render() {
     return(
       <MDBContainer className="my-5 pt-5 mainContainer">
-        <h1><img style={{maxHeight:"1.5rem"}} src={graph}/> UTTR</h1>
+        <h1><i class="fas fa-chart-line"></i> UTTR</h1>
         <br/>
         <p>We believe the way to having a successful life is by always striving to be the best versions of ourselves. 
         This is why we stand behind the motto, UTTR (Up To The Right), which is meant to describe continuous positive growth.
