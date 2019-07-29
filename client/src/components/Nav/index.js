@@ -1,5 +1,8 @@
 import React from 'react';
 import { MDBNavbar, MDBNavbarBrand, MDBNavbarNav, MDBNavbarToggler, MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBCollapse, MDBNavItem, MDBDropdownItem, MDBNavLink, MDBIcon } from 'mdbreact';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../../actions/authActions";
 
 class FixedNavbar extends React.Component {
   constructor(props) {
@@ -20,7 +23,14 @@ class FixedNavbar extends React.Component {
     this.forceUpdate()
   }
 
+  onSignoutClick = (e) => {
+    e.preventDefault()
+    this.props.logoutUser()
+  }
+
   render() {
+    const {isAuthenticated, user} = this.props.auth
+
     return (
       <div>
         <header>
@@ -40,11 +50,6 @@ class FixedNavbar extends React.Component {
                 <MDBNavItem className={window.location.pathname === "/team" && "active"} onClick={this.toggleActive}>
                   <MDBNavLink to="/team" >Team</MDBNavLink>
                 </MDBNavItem>
-                {this.props.isLoggedIn && (
-                  <MDBNavItem className={window.location.pathname === "/team" && "active"} onClick={this.toggleActive}>
-                    <MDBNavLink to="/dashboard" >Goals</MDBNavLink>
-                  </MDBNavItem>
-                )}
               </MDBNavbarNav>
               <MDBNavbarNav right>
               <MDBNavItem>
@@ -52,12 +57,16 @@ class FixedNavbar extends React.Component {
                   <MDBDropdownToggle nav caret>
                     <div className="d-none d-md-inline">
                     <MDBIcon icon="user-circle" style={{fontSize:"1.5rem"}} />
-                    {this.props.isLoggedIn && ` ${this.props.email}`}
+                    {isAuthenticated && ` ${user.email}`}
                     </div>
                   </MDBDropdownToggle>
                   <MDBDropdownMenu right>
-                    {this.props.isLoggedIn? (
-                    <MDBDropdownItem href="/logout">Sign Out</MDBDropdownItem>
+                    {isAuthenticated? (
+                    <div>
+                      <MDBDropdownItem href="/dashboard">My Goals</MDBDropdownItem>
+                      <MDBDropdownItem href="/createGoal">New Goal</MDBDropdownItem>
+                      <MDBDropdownItem href="/logout" onClick={this.onSignoutClick}>Sign Out</MDBDropdownItem>
+                    </div>    
                     ) : (
                     <div>
                       <MDBDropdownItem href="/signup">Sign Up</MDBDropdownItem>
@@ -76,4 +85,16 @@ class FixedNavbar extends React.Component {
   }
 }
 
-export default FixedNavbar;
+FixedNavbar.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(FixedNavbar);

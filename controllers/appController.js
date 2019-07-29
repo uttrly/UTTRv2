@@ -21,7 +21,7 @@ const dashboard = (req, res) => {
     }
 
     function runSearch(id, status, relationship) {
-        db.user.findAll({
+        db.User.findAll({
             attributes: [],
             where: {
                 Id: id
@@ -72,7 +72,7 @@ const dashboard = (req, res) => {
                 owner: owner
             };
 
-            db.user.findAll({
+            db.User.findAll({
                 attributes: {
                     include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
                 },
