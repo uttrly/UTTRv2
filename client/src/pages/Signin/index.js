@@ -66,7 +66,7 @@ class Signin extends React.Component {
       <MDBContainer className="mt-5 pt-5 mainContainer">
         <MDBRow>
           <MDBCol md="6" className="mx-auto">
-            <form>
+            <form className="needs-validation" noValidate>
               <p className="h5 text-center mb-4">Sign In</p>
               <div className="">
                 <MDBInput
@@ -75,33 +75,29 @@ class Signin extends React.Component {
                   icon="envelope"
                   group
                   type="email"
-                  validate
-                  error={errors.email}
-                  success="right"
                   id="email"
                   value={this.state.email}
                   onChange={this.handleChange("email")}
+                  required
                 />
-                <span className="red-text">
+                <small className="form-text red-text">
                   {errors.email}
                   {errors.emailnotfound}
-                </span>  
+                </small>
                 <MDBInput
                   className={classnames("", {invalid: errors.password || errors.passwordincorrect})}
                   label="Type your password"
                   icon="lock"
                   group
                   type="password"
-                  validate
                   id="password"
-                  error={errors.password}
                   value={this.state.password}
                   onChange={this.handleChange("password")}
                 />
-                <span className="red-text">
+                <small className="form-text red-text">
                   {errors.password}
-                  {errors.emailnotfoundpasswordincorrect}
-                </span>                  
+                  {errors.passwordincorrect}
+                </small>
               </div>
               <div className="text-center">
                 <MDBBtn color="yellow accent-3" className="black-text" onClick={(e)=>{this.loginUser(e)}}>Sign in</MDBBtn>
