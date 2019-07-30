@@ -14,10 +14,7 @@ class Signup extends React.Component {
     this.state = {
       email: '',
       password: '',
-      messageFromServer: '',
-      showError: false,
-      registerError: false,
-      loginError: false,
+      terms: false,
       errors: {}
     };
   }
@@ -33,9 +30,7 @@ class Signup extends React.Component {
       this.setState({
         errors: nextProps.errors
       })
-    } else {
-      // this.props.history.push("/signin"); add this in if redux is working to see if we can redirect to signin page
-    }
+    }  
   }
 
   handleChange = name => (event) => {
@@ -44,13 +39,20 @@ class Signup extends React.Component {
     });
   };
 
+  onClick = () => {
+        this.setState({
+      terms: !this.state.terms
+    })
+  }
+
 
   registerUser = (e) => {
     e.preventDefault();
 
     const newUser = {
       email: this.state.email,
-      password: this.state.password
+      password: this.state.password,
+      terms: this.state.terms
     }
   
     this.props.registerUser(newUser, this.props.history)
@@ -73,15 +75,12 @@ class Signup extends React.Component {
                   icon="envelope"
                   group
                   type="email"
-                  error={errors.email}
-                  success="right"
                   value={this.state.email}
                   onChange={this.handleChange('email')}
-                  id="emal"
+                  id="email"
                   required
                   />
-                  <small className="form-text text-muted">{errors.email}</small>
-                  {/* {this.state.email? <small className="form-text text-muted">We will never disclose your email.</small> : <small className="form-text text-muted">Please enter an email.</small>} */}
+                  <small className="form-text red-text">{errors.email}</small>
                 <MDBInput
                   className={classnames("", {invalid: errors.password})}                
                   label="Your password"
@@ -93,23 +92,21 @@ class Signup extends React.Component {
                   onChange={this.handleChange('password')}
                   required
                 />
-                <small className="form-text text-muted">{errors.password}</small>
-                {/* {this.state.password? <small className="form-text text-muted">Don't forget your password.</small> : <small className="form-text text-muted">Please enter a password.</small>} */}
+                <small className="form-text red-text">{errors.password}</small>
                 <div className="custom-control custom-checkbox pl-3">
                 <br/>
                 <input
                   className="custom-control-input"
                   type="checkbox"
                   value=""
-                  id="invalidCheck"
+                  id="termsAndConditions"
                   required
+                  onClick={this.onClick}
                 />
-                <label className="custom-control-label" htmlFor="invalidCheck">
+                <label className="custom-control-label" htmlFor="termsAndConditions">
                   Agree to <a href="/terms" target="_blank">terms and conditions</a>
                 </label>
-                <div className="invalid-feedback">
-                  You must agree before submitting.
-                </div>
+                <small className="form-text red-text">{errors.terms}</small>
                 <br/><br/>
           </div>              
               </div>

@@ -25,17 +25,22 @@ passport.use(
           }
         }).then(user => {
           console.log(`passport user 1 ${user}`)
-          bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
-          .then(hashedPassword => {
-            db.User.create({
-              email: email,
-              password: hashedPassword
+          if (user !== null && user.email && user.password) {
+            return done({email: "Account already exists"})
+          }
+          if (user === null){
+            bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
+            .then(hashedPassword => {
+              db.User.create({
+                email: email,
+                password: hashedPassword
+              })
+              .then(user => {
+                console.log('user created')
+                return done(null, user)
+              })
             })
-            .then(user => {
-              console.log('user created')
-              return done(null, user)
-            })
-          })
+          }
         })
       } catch (err){
         done(err)
@@ -60,13 +65,13 @@ passport.use(
           }
         }).then(user => {
           if (user === null) {
-            return done(null, false, {message: 'Email not found.'})
+            return done({emailnotfound: "Account not found."})
           } else {
             bcrypt.compare(password, user.password)
             .then(response => {
               if (!response){
                 console.log('Password does not mat our records.')
-                return done(null, false, {message: 'Password does not match our records.'})
+                return done({passwordincorrect: 'Password does not match our records.'})
               }
               console.log('User found & authenticated.')
               return done(null, user)
