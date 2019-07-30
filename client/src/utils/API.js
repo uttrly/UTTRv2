@@ -11,4 +11,7 @@ export default {
   search: (route, originStopId, destinationStopId, terminal, previous) => {
     return axios.get(`/api/app/search/${route}/${originStopId}/${destinationStopId}/${terminal}/${previous}`)
   },
+  dashboard: (id,email,status) => {
+    return axios.get(`/api/app/dashboard?id=${id}&email=${email}&status=${status}`)
+  }
 };

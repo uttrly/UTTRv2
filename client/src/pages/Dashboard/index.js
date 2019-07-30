@@ -1,17 +1,50 @@
 import React from 'react';
 import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
-import '../pageStyle.css'
+import '../pageStyle.css';
+import API from "../../utils/API";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from 'axios'
 
+
+
 class Dashboard extends React.Component {
   constructor(props){
     super(props)
+    this.state = {
+        goal: {},
+        point: 0,
+    };
   }
 
   componentDidMount() {
-  }  
+    const {user} = this.props.auth
+      this.dashboard(user.id,user.email,"")
+  }
+  
+  
+  dashboard = (id,email,status) => {
+    // console.log(header)
+    API.dashboard(id,email,status)
+        .then(res => {
+  
+            if (res.points !== null && res.points !== "null" && res.points !== undefined) {
+                this.setState({
+                    point: res.points
+                })
+
+                // console.log(res.points)
+            }
+
+            this.setState({
+              goal: res.goals
+            })
+
+            console.log(res)
+        }
+        )
+        .catch(err => console.log(err));
+  };
 
 
   render() {
@@ -21,12 +54,15 @@ class Dashboard extends React.Component {
       }
 
     const {user} = this.props.auth 
+
     // this is the user object that can be used for interacting w/ db
     // example of user object:
     // user: {
     //   id: 1,
     //   email: 'sharon@gmail.com'
     // } 
+
+    console.log(user.id)
 
       return(
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
@@ -45,7 +81,7 @@ class Dashboard extends React.Component {
                         <div className="row">
                         <div className="col-sm-3"><i className="fas fa-bolt fa-5x"></i></div>
                         <div className="col-sm-9 text-right">
-                            <div className="account-points-earned huge text-right">PlaceHOLDER</div>
+                            <div className="account-points-earned huge text-right">{this.state.point}</div>
                             <div>Earned Points!</div>
                             <h6>Click to enter to win a car</h6>
                         </div>
