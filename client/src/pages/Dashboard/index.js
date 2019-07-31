@@ -66,11 +66,11 @@ class Dashboard extends React.Component {
   }
 
 
-  render() {
+    render() {
 
-    let style = {
-        cursor:"pointer"
-      }
+        let style = {
+            cursor: "pointer"
+        }
 
     const {user} = this.props.auth 
 
@@ -105,12 +105,10 @@ class Dashboard extends React.Component {
                             <div>Earned Points!</div>
                             <h6>Click to enter to win a car</h6>
                         </div>
-                        
+
                         </div>
-                    </div>
-                    </div>
-                </MDBCol>
-            </MDBRow>
+                    </MDBCol>
+                </MDBRow>
 
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -125,7 +123,6 @@ class Dashboard extends React.Component {
                     <MDBBtn onClick={this.handleClick} class="btn btn-sm btn-outline" id="createGoal"><i class="far fa-plus-square"></i> Add New Goal</MDBBtn>
                 </div>
                 </div>
-            </div>
 
 
             <MDBRow>
@@ -175,11 +172,11 @@ class Dashboard extends React.Component {
 };
 
 Dashboard.propTypes = {
-  auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-  auth: state.auth
+    auth: state.auth
 });
 
 export default connect(mapStateToProps

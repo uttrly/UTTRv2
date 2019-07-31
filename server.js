@@ -6,7 +6,9 @@ const bodyParser = require("body-parser");
 const logger = require("morgan")
 const passport = require("passport");
 
-const db = require("./models" );
+const db = require("./models");
+
+require('dotenv').config();
 
 
 const PORT = process.env.PORT || 3001;
