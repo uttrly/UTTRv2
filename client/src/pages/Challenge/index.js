@@ -138,14 +138,14 @@ class Challenge extends React.Component {
         <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
           <MDBModalHeader toggle={this.toggle}>Report</MDBModalHeader>
           <MDBModalBody>
-            <div class="custom-control custom-radio">
-                <input type="radio" class="custom-control-input" id="defaultGroupExample1"   onChange={this.handleChange} value="1" name="success" checked={this.state.success==='1'}/>
-                <label class="custom-control-label" for="defaultGroupExample1">Successfull</label>
+            <div className="custom-control custom-radio">
+                <input type="radio" className="custom-control-input" id="defaultGroupExample1"   onChange={this.handleChange} value="1" name="success" checked={this.state.success==='1'}/>
+                <label className="custom-control-label" htmlFor="defaultGroupExample1">Successfull</label>
             </div>
 
-            <div class="custom-control custom-radio">
-                <input type="radio" class="custom-control-input" id="defaultGroupExample2" onChange={this.handleChange} value="0" name="success" checked={this.state.success==='0'}/>
-                <label class="custom-control-label" for="defaultGroupExample2">Not Successfull</label>
+            <div className="custom-control custom-radio">
+                <input type="radio" className="custom-control-input" id="defaultGroupExample2" onChange={this.handleChange} value="0" name="success" checked={this.state.success==='0'}/>
+                <label className="custom-control-label" htmlFor="defaultGroupExample2">Not Successfull</label>
             </div>
           </MDBModalBody>
           <MDBModalFooter>
@@ -162,27 +162,27 @@ class Challenge extends React.Component {
                 </div>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-header">
+            <div className="card mb-3">
+                <div className="card-header">
                     Description :
                 </div>
-                <div class="card-body">
+                <div className="card-body">
                     <p> {goal.description}</p>
-                    <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style={style}> </div>
+                    <div className="progress">
+                    <div className="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style={style}> </div>
                     </div>
                 </div>
             </div>
 
             {/* /{{!-- report --}} */}
-            <div class="card mb-3">
-                <div class="card-header">
+            <div className="card mb-3">
+                <div className="card-header">
                     Report :
                 </div>
                 {report.map(item => 
-                    <div class="card-body">
-                        <div class="card">
-                            <div class="card-body">
+                    <div className="card-body">
+                        <div className="card">
+                            <div className="card-body">
                                 <h6>Week: {item.week}</h6>
                                 <p>{item.successfull ? "Successful" : "Unsuccessful"}</p>
                             </div>
@@ -191,7 +191,7 @@ class Challenge extends React.Component {
                 )}
 
                 {goal.refereeEmail === user.email ? (
-                <button type="button" class="btn btn-dark waves-effect waves-light" data-toggle="modal"
+                <button type="button" className="btn btn-dark waves-effect waves-light" data-toggle="modal"
                     data-target="#centralModalSm" onClick={this.toggle}>Add a Report</button>
                 ) : (
                     ""
@@ -200,10 +200,10 @@ class Challenge extends React.Component {
             </div>
 
             {/* {{!-- comments --}} */}
-                <div class="card mb-3">
-                    <div class="card-header"> Comments : </div>
-                    <div class="card-body">
-                        <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div className="card mb-3">
+                    <div className="card-header"> Comments : </div>
+                    <div className="card-body">
+                        <div className="list-group-item list-group-item-action flex-column align-items-start">
 
                             {comment.map(item =>
                             <>
@@ -217,10 +217,10 @@ class Challenge extends React.Component {
                             <br></br>
 
                             <form id="commentForm" onSubmit={this.handleSubmit}>
-                                <div class="form-group">
-                                    <label for="comment">Comment : </label>
-                                    <textarea class="form-control" rows="2" id="comment" value={this.state.value} onChange={this.handleChange}></textarea>
-                                    <input type="submit" class="btn btn-dark" value="Submit" />
+                                <div className="form-group">
+                                    <label htmlFor="comment">Comment : </label>
+                                    <textarea className="form-control" rows="2" id="comment" value={this.state.value} onChange={this.handleChange}></textarea>
+                                    <input type="submit" className="btn btn-warning black-text" value="Submit" />
                                 </div>
                             </form>
                         </div>
