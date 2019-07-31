@@ -11,10 +11,10 @@ const apiai = require('apiai')(APIAI_TOKEN);
 // Defining methods for the appController
 module.exports = {
     dashboard: (req, res) => {
-    
+
         // return(console.log(req.query))
 
-        addRefToUserGoals(req,res)
+        addRefToUserGoals(req, res)
         let reqID = req.query.id
         switch (req.query.status) {
             case "referee":
@@ -26,7 +26,7 @@ module.exports = {
             default:
                 runSearch(reqID, 0, "Owner")
         }
-    
+
         function runSearch(id, status, relationship) {
             db.User.findAll({
                 attributes: [],
@@ -43,26 +43,26 @@ module.exports = {
                             UserId: id,
                             relationship: relationship
                         }
-    
+
                     }
                 }],
                 raw: true
             }).then(function (data) {
-    
+
                 var dataArray = [];
                 var owner = 0;
                 if (relationship === "Owner") {
                     owner = 1
                 }
                 for (var i = 0; i < data.length; i++) {
-    
+
                     var duration = data[i]["Goals.duration"]
                     var startDate = new Date(data[i]["Goals.startDate"]);
-    
+
                     //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
-    
+
                     var diffWeek = calculateWeek(startDate);
-    
+
                     var object = {
                         id: data[i]["Goals.id"],
                         name: data[i]["Goals.goalName"],
@@ -72,13 +72,13 @@ module.exports = {
                     }
                     dataArray.push(object)
                 }
-    
+
                 var hbsObject = {
                     goals: dataArray,
                     // userName: req.user.firstName + " " + req.user.lastName,
                     owner: owner
                 };
-    
+
                 db.User.findAll({
                     attributes: {
                         include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
@@ -98,7 +98,7 @@ module.exports = {
                     console.log(hbsObject)
                     res.json(hbsObject)
                 })
-    
+
             });
         }
     },
@@ -114,20 +114,20 @@ module.exports = {
                 id: goalId
             },
             include: [{ model: db.Report }],
-    
+
             raw: true
         }).then((data) => {
             console.log(data);
             var refereeEmail = data[0].refereeEmail
             var oneTime = data[0].oneTime
             var report = []
-    
+
             var userId = req.query.id
-    
+
             var duration = parseInt(data[0]["duration"])
             var startDate = new Date(data[0]["startDate"]);
             var todayDate = new Date(new Date());
-    
+
             var diffWeek = calculateWeek(startDate) //gives weeks difference
 
             if (diffWeek > duration) {
@@ -135,13 +135,13 @@ module.exports = {
             }
             //var diffWeek = 4
             var progressperc;
-                progressperc = diffWeek / duration * 100
+            progressperc = diffWeek / duration * 100
 
             console.log(diffWeek)
             console.log(duration)
-    
+
             for (var i = 0; i < data.length; i++) {
-    
+
                 if (data[i]["Reports.id"] !== null) {
                     var reportObj = {
                         week: data[i]["Reports.week"],
@@ -149,10 +149,10 @@ module.exports = {
                     }
                     report.push(reportObj)
                 }
-    
+
             }
-    
-    
+
+
             var hbsObject = {
                 goal:
                 {
@@ -167,12 +167,12 @@ module.exports = {
                 // userName: req.user.firstName + " " + req.user.lastName,
                 progressperc: progressperc
             };
-    
+
             console.log(hbsObject)
             db.Report.findAll({
                 attributes:
                     ['week'],
-    
+
                 where: {
                     GoalId: goalId
                 }, raw: true,
@@ -181,9 +181,9 @@ module.exports = {
                 var done = 1;
                 for (var i = 1; i <= diffWeek; i++) {
                     pos = data.map(function (e) { return e.week; }).indexOf(i);
-    
+
                     if (pos == "-1" && i < diffWeek) {
-    
+
                         var report = {
                             sucess: 0,
                             authorType: 1,
@@ -197,18 +197,18 @@ module.exports = {
                     } else if ((pos == "-1" && i == diffWeek && refereeEmail == req.query.email) || oneTime == 1) {
                         done = 0
                     }
-    
+
                 }
-    
+
                 if (oneTime == "1" && startDate <= todayDate && refereeEmail == req.query.email && (data == null || data == "")) {
                     console.log("testing00000000000000000")
                     done = 0
                 }
-    
+
                 hbsObject.done = done;
-    
+
                 // comment ===================================================================
-    
+
                 db.Comment.findAll({
                     where: {
                         GoalId: goalId
@@ -231,7 +231,7 @@ module.exports = {
                     // console.log(comment)
                     console.log(hbsObject)
                     res.json(hbsObject);
-    
+
                 })
             })
         })
@@ -276,7 +276,7 @@ module.exports = {
         var success = req.body.success
         var goalId = req.body.goalID
         var authorType = 1
-    
+
         db.Goal.findOne({
             where: {
                 refereeEmail: userEmail,
@@ -284,16 +284,16 @@ module.exports = {
             }
         }).then(function (data) {
             console.log(data)
-    
+
             var week = calculateWeek(data.startDate)
             var duration = data.duration
             var points = data.points
             var oneTime = data.oneTime
-    
+
             if (oneTime == 1) {
                 week = 1
             }
-    
+
             var report = {
                 sucess: success,
                 authorType: authorType,
@@ -301,9 +301,9 @@ module.exports = {
                 week: week,
                 GoalId: goalId
             }
-    
-    
-    
+
+
+
             if (data !== "" || data !== null) {
                 if (success == "1") {
                     db.Goal.update({
@@ -318,19 +318,19 @@ module.exports = {
                         .then(function (result) {
                             console.log("updated")
                             console.log(result);
-    
+
                         });
                 }
-    
-    
-    
+
+
+
                 db.Report.create(report).then(function () {
-    
+
                     if (week == duration || oneTime == 1) {
                         db.Report.findAll({
                             attributes:
                                 ['sucess'],
-    
+
                             where: {
                                 GoalId: goalId
                             }, raw: true
@@ -347,16 +347,16 @@ module.exports = {
                                     totalSuccess += currentSuccess
                                 }
                             }
-    
+
                             overallPer = parseInt(totalSuccess) / parseInt(duration) * 100
-    
+
                             console.log("overall" + overallPer)
-    
+
                             if (overallPer < 80) {
                                 console.log("Sending out email")
                                 sendEmail.emailQueryUponFail(goalId)
                             }
-    
+
                             db.Goal.update({
                                 status: 1,
                             }, {
@@ -367,7 +367,7 @@ module.exports = {
                                     plain: true
                                 })
                         });
-    
+
                     }
                     res.send({
                         redirect: "/challenge/" + goalId
@@ -380,7 +380,7 @@ module.exports = {
 
 const nlp = (req, res) => {
     console.log(req.body)
-    
+
     let apiaiReq = apiai.textRequest(req.body.goal, {
         sessionId: APIAI_SESSION_ID
     });
@@ -390,7 +390,7 @@ const nlp = (req, res) => {
 
         console.log(aiText);
 
-        
+
         let newGoal = {
             goalName: aiText.goal,
             description: req.body.goal,
@@ -398,15 +398,15 @@ const nlp = (req, res) => {
             refereeEmail: req.body.refereeEmail,
             startDate: aiText.startTime,
             stake: req.body.stake
-        } 
-        
+        }
+
         console.log(newGoal)
 
         createGoalDB(newGoal, req, res)
 
     });
 
-    apiaiReq.on('error', error => res.status(400).send({error: 'We cannot understand your goal. Please follow the prescribed format.'}));
+    apiaiReq.on('error', error => res.status(400).send({ error: 'We cannot understand your goal. Please follow the prescribed format.' }));
     apiaiReq.end();
 
 }
@@ -414,23 +414,23 @@ const nlp = (req, res) => {
 const createGoalDB = (newGoal, req, res) => {
     console.log(newGoal)
     db.Goal.create(newGoal)
-    .then((goal) => {
-        console.log(`goal added ${goal}`)
-        let relationshipData = {
-            GoalId: goal.dataValues.id,
-            UserId: req.body.userId,
-            relationship: "Owner"
-        }
-        db.userGoals.create(relationshipData)
-        .then(()=> {
-            console.log("callback function  ------");
-            res.status(200).send({message: 'Goal sucessfully created.'})
+        .then((goal) => {
+            console.log(`goal added ${goal}`)
+            let relationshipData = {
+                GoalId: goal.dataValues.id,
+                UserId: req.body.userId,
+                relationship: "Owner"
+            }
+            db.userGoals.create(relationshipData)
+                .then(() => {
+                    console.log("callback function  ------");
+                    res.status(200).send({ message: 'Goal sucessfully created.' })
+                })
+        }).catch(err => {
+            console.log(err)
+            res.status(400).send({ error: 'Sorry an unexpected error has occured. Please resubmit your goal.' })
         })
-    }).catch(err => {
-        console.log(err)
-        res.status(400).send({error: 'Sorry an unexpected error has occured. Please resubmit your goal.'})
-    })
-    
+
 }
 
 const addRefToUserGoals = (req, res, next) => {
@@ -463,7 +463,7 @@ const calculateWeek = (startDate) => {
     var date1 = new Date(startDate);
     var date2 = new Date(new Date());
     var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
-    if (diffWeek < 0){
+    if (diffWeek < 0) {
         return diffWeek = 0
     }
     return diffWeek;

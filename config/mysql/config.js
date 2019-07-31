@@ -6,7 +6,7 @@ module.exports = {
     "database": "UTTR2db",
     "host": "localhost",
     "dialect": "mysql",
-    "port": "3306"
+    "port": "8889"
   },
   "test": {
     "username": "",
