@@ -11,224 +11,236 @@ const APIAI_SESSION_ID = process.env.APIAI_SESSION_ID;
 
 // Defining methods for the appController
 module.exports = {
-};
+    dashboard: (req, res) => {
+    
+        // return(console.log(req.query))
 
-const dashboard = (req, res) => {
-    switch (req.params.status) {
-        case "referee":
-            runSearch(req.user.id, 0, "Referee")
-            break;
-        case "complete":
-            runSearch(req.user.id, 1, "Owner")
-            break;
-        default:
-            runSearch(req.user.id, 0, "Owner")
-    }
-
-    function runSearch(id, status, relationship) {
-        db.User.findAll({
-            attributes: [],
-            where: {
-                Id: id
-            },
-            include: [{
-                model: db.Goal,
-                where: {
-                    status: status
-                },
-                through: {
-                    where: {
-                        UserId: req.user.id,
-                        relationship: relationship
-                    }
-
-                }
-            }],
-            raw: true
-        }).then(function (data) {
-
-            var dataArray = [];
-            var owner;
-            if (relationship === "Owner") {
-                owner = 1
-            }
-            for (var i = 0; i < data.length; i++) {
-
-                var duration = data[i]["Goals.duration"]
-                var startDate = new Date(data[i]["Goals.startDate"]);
-
-                //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
-
-                var diffWeek = calculateWeek(startDate);
-
-                var object = {
-                    id: data[i]["Goals.id"],
-                    name: data[i]["Goals.goalName"],
-                    description: data[i]["Goals.description"],
-                    createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
-                    duration: diffWeek + "/" + duration
-                }
-                dataArray.push(object)
-            }
-
-            var hbsObject = {
-                goals: dataArray,
-                userName: req.user.firstName + " " + req.user.lastName,
-                owner: owner
-            };
-
+        addRefToUserGoals(req,res)
+        let reqID = req.query.id
+        switch (req.query.status) {
+            case "referee":
+                runSearch(reqID, 0, "Referee")
+                break;
+            case "complete":
+                runSearch(reqID, 1, "Owner")
+                break;
+            default:
+                runSearch(reqID, 0, "Owner")
+        }
+    
+        function runSearch(id, status, relationship) {
             db.User.findAll({
-                attributes: {
-                    include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
-                },
+                attributes: [],
                 where: {
                     Id: id
                 },
                 include: [{
                     model: db.Goal,
+                    where: {
+                        status: status
+                    },
                     through: {
-                        where: { UserId: req.user.id, relationship: "Owner" }
+                        where: {
+                            UserId: id,
+                            relationship: relationship
+                        }
+    
                     }
-                }], raw: true
-            }).then(function (results) {
-                console.log(results[0].points)
-                hbsObject.points = results[0].points;
-                console.log(hbsObject)
-                res.render('dashboard', hbsObject)
-            })
-
-        });
-    }
-}
-
-
-
-const challenge = (req, res) => {
-    var goalId = req.params.id
-    console.log("/challenge/:id gets rendered")
-    db.Goal.findAll({
-        where: {
-            id: goalId
-        },
-        include: [{ model: db.Report }],
-
-        raw: true
-    }).then((data) => {
-        console.log(data);
-        var refereeEmail = data[0].refereeEmail
-        var oneTime = data[0].oneTime
-        var report = []
-
-        var userId = req.user.id
-
-        var duration = parseInt(data[0]["duration"])
-        var startDate = new Date(data[0]["startDate"]);
-        var todayDate = new Date(new Date());
-
-        var diffWeek = calculateWeek(startDate) //gives weeks difference 
-        //var diffWeek = 4
-        var progressperc = diffWeek / duration * 100
-
-        console.log(diffWeek)
-        console.log(duration)
-
-        for (var i = 0; i < data.length; i++) {
-
-            if (data[i]["Reports.id"] !== null) {
-                var reportObj = {
-                    week: data[i]["Reports.week"],
-                    successfull: data[i]["Reports.sucess"]
+                }],
+                raw: true
+            }).then(function (data) {
+    
+                var dataArray = [];
+                var owner = 0;
+                if (relationship === "Owner") {
+                    owner = 1
                 }
-                report.push(reportObj)
-            }
-
+                for (var i = 0; i < data.length; i++) {
+    
+                    var duration = data[i]["Goals.duration"]
+                    var startDate = new Date(data[i]["Goals.startDate"]);
+    
+                    //var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
+    
+                    var diffWeek = calculateWeek(startDate);
+    
+                    var object = {
+                        id: data[i]["Goals.id"],
+                        name: data[i]["Goals.goalName"],
+                        description: data[i]["Goals.description"],
+                        createDate: data[i]["Goals.createdAt"].toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
+                        duration: diffWeek + "/" + duration
+                    }
+                    dataArray.push(object)
+                }
+    
+                var hbsObject = {
+                    goals: dataArray,
+                    // userName: req.user.firstName + " " + req.user.lastName,
+                    owner: owner
+                };
+    
+                db.User.findAll({
+                    attributes: {
+                        include: [[db.sequelize.fn('sum', db.sequelize.col('points')), "points"]]
+                    },
+                    where: {
+                        Id: id
+                    },
+                    include: [{
+                        model: db.Goal,
+                        through: {
+                            where: { UserId: id, relationship: "Owner" }
+                        }
+                    }], raw: true
+                }).then(function (results) {
+                    console.log(results[0].points)
+                    hbsObject.points = results[0].points;
+                    console.log(hbsObject)
+                    res.json(hbsObject)
+                })
+    
+            });
         }
+    },
 
 
-        var hbsObject = {
-            goal:
-            {
-                id: data[0].id,
-                goalName: data[0].goalName,
-                description: data[0].description,
-                startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, '')
-            },
-            report,
-            // comment,
-            userName: req.user.firstName + " " + req.user.lastName,
-            progressperc: progressperc
-        };
-
-        console.log(hbsObject)
-        db.Report.findAll({
-            attributes:
-                ['week'],
-
+    challenge: (req, res) => {
+        var goalId = req.query.id
+        console.log("/challenge/:id gets rendered")
+        db.Goal.findAll({
             where: {
-                GoalId: goalId
-            }, raw: true,
-            order: ['week']
-        }).then(function (data) {
-            var done = 1;
-            for (var i = 1; i <= diffWeek; i++) {
-                pos = data.map(function (e) { return e.week; }).indexOf(i);
+                id: goalId
+            },
+            include: [{ model: db.Report }],
+    
+            raw: true
+        }).then((data) => {
+            console.log(data);
+            var refereeEmail = data[0].refereeEmail
+            var oneTime = data[0].oneTime
+            var report = []
+    
+            var userId = req.query.id
+    
+            var duration = parseInt(data[0]["duration"])
+            var startDate = new Date(data[0]["startDate"]);
+            var todayDate = new Date(new Date());
+    
+            var diffWeek = calculateWeek(startDate) //gives weeks difference
 
-                if (pos == "-1" && i < diffWeek) {
+            if (diffWeek > duration) {
+                diffWeek = duration + 1
+            }
+            //var diffWeek = 4
+            var progressperc;
+                progressperc = diffWeek / duration * 100
 
-                    var report = {
-                        sucess: 0,
-                        authorType: 1,
-                        userId: userId,
-                        week: i,
-                        GoalId: goalId
+            console.log(diffWeek)
+            console.log(duration)
+    
+            for (var i = 0; i < data.length; i++) {
+    
+                if (data[i]["Reports.id"] !== null) {
+                    var reportObj = {
+                        week: data[i]["Reports.week"],
+                        successfull: data[i]["Reports.sucess"]
                     }
-                    db.Report.create(report).then(function () {
-                        res.redirect("/challenge/" + goalId)
-                    })
-                } else if ((pos == "-1" && i == diffWeek && refereeEmail == req.user.email) || oneTime == 1) {
-                    done = 0
+                    report.push(reportObj)
                 }
-
-
-
+    
             }
-
-            if (oneTime == "1" && startDate <= todayDate && refereeEmail == req.user.email && (data == null || data == "")) {
-                console.log("testing00000000000000000")
-                done = 0
-            }
-
-            hbsObject.done = done;
-
-            // comment ===================================================================
-
-            db.Comment.findAll({
+    
+    
+            var hbsObject = {
+                goal:
+                {
+                    id: data[0].id,
+                    goalName: data[0].goalName,
+                    description: data[0].description,
+                    startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, '')
+                },
+                report,
+                // comment,
+                // userName: req.user.firstName + " " + req.user.lastName,
+                progressperc: progressperc
+            };
+    
+            console.log(hbsObject)
+            db.Report.findAll({
+                attributes:
+                    ['week'],
+    
                 where: {
                     GoalId: goalId
-                }
+                }, raw: true,
+                order: ['week']
             }).then(function (data) {
-                var comment = []
-                console.log("====================================")
-                console.log(data)
-                for (var i = 0; i < data.length; i++) {
-                    var commentOBJ = {
-                        text: data[i].text,
-                        username: data[i].username,
-                        createdAt: data[i].createdAt,
-                        // GoalId: goalId
+                var done = 1;
+                for (var i = 1; i <= diffWeek; i++) {
+                    pos = data.map(function (e) { return e.week; }).indexOf(i);
+    
+                    if (pos == "-1" && i < diffWeek) {
+    
+                        var report = {
+                            sucess: 0,
+                            authorType: 1,
+                            userId: userId,
+                            week: i,
+                            GoalId: goalId
+                        }
+                        db.Report.create(report).then(function () {
+                            res.redirect("/challenge/" + goalId)
+                        })
+                    } else if ((pos == "-1" && i == diffWeek && refereeEmail == req.query.email) || oneTime == 1) {
+                        done = 0
                     }
-                    comment.push(commentOBJ);
+    
                 }
-                hbsObject.comment = comment;
-                console.log("====================================")
-                // console.log(comment)
-                console.log(hbsObject)
-                res.render("challenge", hbsObject);
-
+    
+                if (oneTime == "1" && startDate <= todayDate && refereeEmail == req.query.email && (data == null || data == "")) {
+                    console.log("testing00000000000000000")
+                    done = 0
+                }
+    
+                hbsObject.done = done;
+    
+                // comment ===================================================================
+    
+                db.Comment.findAll({
+                    where: {
+                        GoalId: goalId
+                    }
+                }).then(function (data) {
+                    var comment = []
+                    console.log("====================================")
+                    console.log(data)
+                    for (var i = 0; i < data.length; i++) {
+                        var commentOBJ = {
+                            text: data[i].text,
+                            username: data[i].username,
+                            createdAt: data[i].createdAt,
+                            // GoalId: goalId
+                        }
+                        comment.push(commentOBJ);
+                    }
+                    hbsObject.comment = comment;
+                    console.log("====================================")
+                    // console.log(comment)
+                    console.log(hbsObject)
+                    res.json(hbsObject);
+    
+                })
             })
         })
-    })
-}
+    }
+};
+
+
+
+
+
+
 
 const report = (req, res) => {
     var userId = req.user.id
@@ -449,7 +461,7 @@ exports.newChallenge = function (req, res) {
 
 const addRefToUserGoals = (req, res, next) => {
     console.log("adding ref to user")
-    var userEmail = req.user.email
+    var userEmail = req.query.email
 
     db.Goal.findAll({
         where: {
@@ -460,7 +472,7 @@ const addRefToUserGoals = (req, res, next) => {
         data.forEach(element => {
             var userGoalData = {
                 GoalId: element.dataValues.id,
-                UserId: req.user.id,
+                UserId: req.query.id,
                 relationship: "Referee"
             }
 
