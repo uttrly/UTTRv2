@@ -3,10 +3,11 @@ const db = require("../models");
 const axios = require("axios");
 const SparkPost = require('sparkpost');
 const client = new SparkPost("2b862987dfc382161bbc77bf1bf8d6773db93dba");
-const apiai = require('apiai')(APIAI_TOKEN);
+// const APIAI_TOKEN = process.env.APIAI_TOKEN;
+// const APIAI_SESSION_ID = process.env.APIAI_SESSION_ID;
+// const apiai = require('apiai')(APIAI_TOKEN);
 
-const APIAI_TOKEN = process.env.APIAI_TOKEN;
-const APIAI_SESSION_ID = process.env.APIAI_SESSION_ID;
+
 
 
 // Defining methods for the appController
