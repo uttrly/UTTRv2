@@ -132,6 +132,8 @@ module.exports = {
 
             if (diffWeek > duration) {
                 diffWeek = duration + 1
+            } else if (diffWeek < duration) {
+                diffWeek = 0
             }
             //var diffWeek = 4
             var progressperc;
@@ -428,10 +430,6 @@ const createGoalDB = (newGoal, req, res) => {
                 .then(() => {
                     console.log("callback function  ------");
                     res.status(200).send({ message: 'Goal sucessfully created.' })
-                }).then(() => {
-                    res.send({
-                        redirect: "/dashboard"
-                    })
                 })
         }).catch(err => {
             console.log(err)
@@ -470,7 +468,17 @@ const calculateWeek = (startDate) => {
     var date1 = new Date(startDate);
     var date2 = new Date(new Date());
     var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
+
+    var futureDate = date1.getTime() > date2.getTime();
+
+    // if (futureDate) {
+    //     console.log(" ---- future date ----")
+    //     var newDiffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7));
+    //     return newDiffWeek;
+    // } else {
     return diffWeek;
+    // }
+
 }
 
 const emailQueryUponFail = (id) => {
