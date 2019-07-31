@@ -88,12 +88,6 @@ class Challenge extends React.Component {
               const {user} = this.props.auth
               this.goal(user.id,user.email,goalID)
             }
-            // this.setState({
-            //     comment : data.comment,
-            //     goal: data.goal,
-            //     report: data.report,
-            //     progressperc: data.progressperc
-            // })
         }
         )
         .catch(err => console.log(err));
@@ -223,7 +217,7 @@ class Challenge extends React.Component {
                             )}
 
                             <br></br>
-
+                            <br></br>
                             <form id="commentForm" onSubmit={this.handleSubmit}>
                                 <div className="form-group">
                                     <label htmlFor="comment">Comment : </label>
