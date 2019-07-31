@@ -5,10 +5,15 @@ export default {
   getAllBuses: (lat, lon) => {
     return axios.get(`/api/bus/latlon/${lat}/${lon}`);
   },
-  getNextStops: (route, direction, stopId) =>{
+  getNextStops: (route, direction, stopId) => {
     return axios.get(`/api/bus/nextstops/${route}/${direction}/${stopId}`)
   },
   search: (route, originStopId, destinationStopId, terminal, previous) => {
     return axios.get(`/api/app/search/${route}/${originStopId}/${destinationStopId}/${terminal}/${previous}`)
   },
+  createGoal: (userData) => {
+    console.log("---- posted ----")
+    return axios.post("http://localhost:3001/api/challenge/", userData);
+  }
 };
+
