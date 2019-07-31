@@ -23,7 +23,6 @@ import Challenge from './pages/Challenge'
 import CreateGoal from "./pages/createGoal"
 import PrivateRoute from "./components/private-route/PrivateRoute"
 
-
 if (localStorage.jwtToken) {
   // Set auth token header auth
   const token = localStorage.jwtToken;
@@ -56,7 +55,7 @@ class App extends React.Component {
             <Footer />
           </div>
         </Router>
-      </Provider>  
+      </Provider>
     );
   }
 }

@@ -3,6 +3,11 @@ const db = require("../models");
 const axios = require("axios");
 const SparkPost = require('sparkpost');
 const client = new SparkPost("2b862987dfc382161bbc77bf1bf8d6773db93dba");
+const apiai = require('apiai')(APIAI_TOKEN);
+
+const APIAI_TOKEN = process.env.APIAI_TOKEN;
+const APIAI_SESSION_ID = process.env.APIAI_SESSION_ID;
+
 
 // Defining methods for the appController
 module.exports = {
@@ -371,24 +376,88 @@ const addComment = (req, res) => {
 }
 // end =========================================================
 
+exports.newChallenge = function (req, res) {
+    console.log("now you can save data to db ------------------- ");
+    console.log(req);
+    // db.Goal.create(req.body)
 
-const newChallenge = (req, res) => {
-    db.Goal.create(req.body)
-        .then((goal) => {
-            console.log(req);
-            console.log(`goal added`)
-            var relationshipData = {
-                GoalId: goal.dataValues.id,
-                UserId: req.user.id,
-                relationship: "Owner"
-            }
-            db.userGoals.create(relationshipData)
-        }).then(() => {
-            res.send({
-                redirect: "/dashboard"
-            })
-        })
+
+    // dialogflow--------------- --------------------------- 
+
+    // var goal = req.body.comment;
+    // var duration = "";
+    // var startTime = "";
+
+    // console.log("********"
+    //     , req.body);
+
+    // console.log(goal);
+
+    // let apiaiReq = apiai.textRequest(goal, {
+    //     sessionId: APIAI_SESSION_ID
+    // });
+
+    // // console.log(apiaiReq);
+
+    // apiaiReq.on('response', (response) => {
+    //     const aiText = response.result;
+
+    //     console.log(aiText);
+
+    //     console.log("Goal:" + aiText.parameters.goal);
+    //     console.log("Duration: " + aiText.parameters.duration.amount + aiText.parameters.duration.unit);
+    //     console.log("Start Date: " + aiText.parameters.startTime);
+
+    //     duration = aiText.parameters.duration.amount + aiText.parameters.duration.unit;
+    //     startTime = aiText.parameters.startTime;
+
+    //     console.log(aiText.fulfillment);
+    //     let json = response.result.parameters
+    //     console.log("json" + json);
+
+    //     db.Goal.create({
+    //         goal: goal,
+    //         correct: 0,
+    //         duration: duration,
+    //         startTime: startTime
+    //     },
+    //         function (err, inserted) {
+    //             if (err) {
+    //                 // Log the error if one is encountered during the query
+    //                 console.log(err);
+    //             } else {
+    //                 // Otherwise, log the inserted data
+    //                 // console.log(
+    //                 //   "ID-------" + inserted);
+    //                 let json = response.result.parameters
+    //                 json.id = inserted._id
+    //                 console.log(
+    //                     "ID-------" + json.id);
+    //                 res.json(response.result.parameters)
+    //             }
+    //         }
+    //     ).then((goal) => {
+    //         console.log(req);
+    //         console.log(`goal added`)
+    //         // var relationshipData = {
+    //         //     GoalId: goal.dataValues.id,
+    //         //     UserId: req.user.id,
+    //         //     relationship: "Owner"
+    //         // }
+    //         // db.userGoals.create(relationshipData)
+    //     }).then(() => {
+    //         console.log("callback function  ------");
+    //         res.send({
+
+    //             redirect: "/dashboard"
+    //         })
+    //     })
+    // });
+
+    // apiaiReq.on('error', error => console.log(error));
+    // apiaiReq.end();
 }
+
 
 const addRefToUserGoals = (req, res, next) => {
     console.log("adding ref to user")
@@ -424,40 +493,40 @@ const calculateWeek = (startDate) => {
 }
 
 const emailQueryUponFail = (id) => {
-  var goalId = id
+    var goalId = id
     db.Goal.findOne({
-        attributes: [ 'goalName', 'stake', 'refereeEmail'],
-        where: {id: goalId},
+        attributes: ['goalName', 'stake', 'refereeEmail'],
+        where: { id: goalId },
     })
-    .then((data) => {
-        let goalName = data.dataValues.goalName
-        let stakeURL = data.dataValues.stake
-        let refEmail = data.dataValues.refereeEmail
+        .then((data) => {
+            let goalName = data.dataValues.goalName
+            let stakeURL = data.dataValues.stake
+            let refEmail = data.dataValues.refereeEmail
 
-        sendEmailOnFail(goalName, stakeURL, refEmail)
-    })
+            sendEmailOnFail(goalName, stakeURL, refEmail)
+        })
 }
 
 const sendEmailOnFail = (goalName, stakeURL, refEmail) => {
     client.transmissions.send({
         options: {
-          sandbox: true
+            sandbox: true
         },
         content: {
-          from: 'testing@sparkpostbox.com', // needs to be updated
-          subject: 'Your friend has UTTRly failed at ' + goalName + '.', //Should query to get the goal owner's name but meh
-          html:'<html><body><p>This is what was put on stake. Do what you will with it.</p><br><img src="'+ stakeURL +'"></body></html>'
+            from: 'testing@sparkpostbox.com', // needs to be updated
+            subject: 'Your friend has UTTRly failed at ' + goalName + '.', //Should query to get the goal owner's name but meh
+            html: '<html><body><p>This is what was put on stake. Do what you will with it.</p><br><img src="' + stakeURL + '"></body></html>'
         },
         recipients: [
-          {address: refEmail}
+            { address: refEmail }
         ]
-      })
-      .then(data => {
-        console.log('Woohoo! You just sent your first mailing!');
-        console.log(data);
-      })
-      .catch(err => {
-        console.log('Whoops! Something went wrong');
-        console.log(err);
-      });
+    })
+        .then(data => {
+            console.log('Woohoo! You just sent your first mailing!');
+            console.log(data);
+        })
+        .catch(err => {
+            console.log('Whoops! Something went wrong');
+            console.log(err);
+        });
 }
