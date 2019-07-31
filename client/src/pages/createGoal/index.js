@@ -179,7 +179,7 @@ class CreateGoal extends Component {
                                     </div>                                        
                                     <small className="form-text red-text">{errors.stake}</small>
                                     <br />
-                                    <MDBBtn color="yellow accent-3" type="submit" onClick={this.handleFormSubmit} className="btn btn-dark">Submit</MDBBtn>
+                                    <MDBBtn color="yellow accent-3" type="submit" onClick={this.handleFormSubmit} className="black-text">Submit</MDBBtn>
                                 </form>
                             </MDBCardBody>
                         </MDBCard>
