@@ -8,4 +8,10 @@ router.route("/dashboard")
 router.route("/challenge")
 .get(appController.challenge)
 
+router.route("/comment")
+.post(appController.addComment)
+
+router.route("/report")
+.post(appController.report)
+
 module.exports = router;

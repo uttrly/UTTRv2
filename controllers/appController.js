@@ -101,7 +101,9 @@ module.exports = {
 
 
     challenge: (req, res) => {
-        var goalId = req.query.id
+        var goalId = req.query.goalId
+
+        console.log(res.query)
         console.log("/challenge/:id gets rendered")
         db.Goal.findAll({
             where: {
@@ -153,7 +155,8 @@ module.exports = {
                     id: data[0].id,
                     goalName: data[0].goalName,
                     description: data[0].description,
-                    startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, '')
+                    startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
+                    refereeEmail: data[0].refereeEmail
                 },
                 report,
                 // comment,
@@ -228,20 +231,51 @@ module.exports = {
                 })
             })
         })
-    }
-};
+    },
+
+    // ========================== comment =====================
+    addComment: (req, res) => {
+        // return(console.log(req.body))
+        console.log(req.body)
+        var GoalId = req.body.goalID;
+
+        console.log(GoalId)
+        var username = req.body.email
+        var body = {
+            text: req.body.comment,
+            username: username,
+            GoalId: GoalId
+        }
+
+        db.Goal.findOne({
+            where: {
+                id: GoalId
+            }
+        }).then(function (data) {
+            console.log(data);
+            if (data !== "" || data !== null) {
+                body.username = username
+                db.Comment.create(body).then(function (commentdb) {
+                    console.log("okay")
+                    // res.send({
+                    //     redirect: "/challenge/" + GoalId
+                    // })
+                    //res.json(commentdb);
+
+                })
+            }
+
+        })
+    },
+// end =========================================================
 
 
-
-
-
-
-
-const report = (req, res) => {
-    var userId = req.user.id
-    var userEmail = req.user.email
+report: (req, res) => {
+    // return(console.log(req.body))
+    var userId = req.body.id
+    var userEmail = req.body.email
     var success = req.body.success
-    var goalId = req.body.goalId
+    var goalId = req.body.goalID
     var authorType = 1
 
     db.Goal.findOne({
@@ -344,32 +378,16 @@ const report = (req, res) => {
     });
 }
 
-// ========================== comment =====================
-const addComment = (req, res) => {
-    var GoalId = req.body.GoalId;
-    var username = req.user.username
-    var body = req.body
 
-    db.Goal.findOne({
-        where: {
-            id: GoalId
-        }
-    }).then(function (data) {
-        console.log(data);
-        if (data !== "" || data !== null) {
-            body.username = username
-            db.Comment.create(body).then(function (commentdb) {
-                res.send({
-                    redirect: "/challenge/" + GoalId
-                })
-                //res.json(commentdb);
+};
 
-            })
-        }
 
-    })
-}
-// end =========================================================
+
+
+
+
+
+
 
 
 const newChallenge = (req, res) => {

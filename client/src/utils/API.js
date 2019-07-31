@@ -16,5 +16,21 @@ export default {
   },
   getGoalInfo: (id,email,goalId) => {
     return axios.get(`/api/app/challenge?id=${id}&email=${email}&goalId=${goalId}`)
+  },
+  submitComment: (id,email,goalID,comment) => {
+    return axios.post(`/api/app/comment`, {
+      id : id,
+      email: email,
+      goalID: goalID,
+      comment: comment
+    })
+  },
+  submitReport: (id,email,goalID,success) => {
+    return axios.post(`/api/app/report`, {
+      id : id,
+      email: email,
+      goalID: goalID,
+      success: success
+    })
   }
 };
