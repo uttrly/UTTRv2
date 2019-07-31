@@ -90,31 +90,31 @@ class Dashboard extends React.Component {
                     </div>
                 </MDBCol>
             </MDBRow>
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h2 class="h2">My Goals</h2>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                <div class="btn-group mr-2" >
-                    <button  onClick={this.handleClick} class="btn btn-sm btn-outline" id="" ><i  class="fas fa-th-list"></i>My Goals </button>
-                    <button onClick={this.handleClick} class="btn btn-sm btn-outline" id="referee"><i class="far fa-eye"></i>Referee</button>
+            <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h2 className="h2">My Goals</h2>
+                <div className="btn-toolbar mb-2 mb-md-0">
+                <div className="btn-group mr-2" >
+                    <button  onClick={this.handleClick} className="btn btn-sm btn-outline" id="" ><i  className="fas fa-th-list"></i> My Goals </button>
+                    <button onClick={this.handleClick} className="btn btn-sm btn-outline" id="referee"><i className="far fa-eye"></i> Referee</button>
                 </div>
-                <div class="btn-group mr-2">
-                    <MDBBtn onClick={this.handleClick} class="btn btn-sm btn-outline" id="createGoal"><i class="far fa-plus-square"></i> Add New Goal</MDBBtn>
+                <div className="btn-group mr-2">
+                    <MDBBtn onClick={this.handleClick} className="btn btn-sm btn-outline" id="createGoal"><i className="far fa-plus-square"></i> Add New Goal</MDBBtn>
                 </div>
                 </div>
             </div>
             <MDBRow>
                 {this.state.owner === 1 ? (
                 <MDBCol md="2">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                    <a class="nav-link active" id="" href="#" onClick={this.handleClick}>
-                        <i class="fas fa-chart-line"></i>
-                        Active <span class="sr-only">(current)</span>
+                <ul className="nav flex-column">
+                    <li className="nav-item">
+                    <a className="nav-link active" id="" href="#" onClick={this.handleClick}>
+                        <i className="fas fa-chart-line"></i>{' '}
+                        Active <span className="sr-only">(current)</span>
                     </a>
                     </li>
-                    <li class="nav-item">
-                    <a class="nav-link" id="complete" href="#" onClick={this.handleClick}>
-                        <i class="far fa-check-square"></i> Complete
+                    <li className="nav-item">
+                    <a className="nav-link" id="complete" href="#" onClick={this.handleClick}>
+                        <i className="far fa-check-square"></i> Complete
                     </a>
                     </li>
                 </ul>
@@ -124,13 +124,13 @@ class Dashboard extends React.Component {
                 }
                 <MDBCol md="10">
                 {this.state.goal.map(item => 
-                <div class="list-group scrollable" key={item.id}>
-                    <a href={"/challenge/" + item.id} class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1 indigo-text">{item.name}</h5>
-                        <small class="cyan-text">{item.duration}</small>
+                <div className="list-group scrollable" key={item.id}>
+                    <a href={"/challenge/" + item.id} className="list-group-item list-group-item-action flex-column align-items-start">
+                    <div className="d-flex w-100 justify-content-between">
+                        <h5 className="mb-1 indigo-text">{item.name}</h5>
+                        <small className="cyan-text">{item.duration}</small>
                     </div>
-                    <p class="mb-1">{item.description}</p>
+                    <p className="mb-1">{item.description}</p>
                     <small>Created: {item.createDate}</small>
                     </a>
                 </div>

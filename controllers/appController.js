@@ -466,6 +466,9 @@ const calculateWeek = (startDate) => {
     var date1 = new Date(startDate);
     var date2 = new Date(new Date());
     var diffWeek = parseInt((date2 - date1) / (24 * 3600 * 1000 * 7)); //gives day difference 
+    if (diffWeek < 0){
+        return diffWeek = 0
+    }
     return diffWeek;
 }
 
