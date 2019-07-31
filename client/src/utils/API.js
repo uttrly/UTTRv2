@@ -16,11 +16,10 @@ export default {
   },
   getGoalInfo: (id,email,goalId) => {
     return axios.get(`/api/app/challenge?id=${id}&email=${email}&goalId=${goalId}`)
-  }
-};
+  },
   createGoal: (userData) => {
     console.log("---- posted ----")
-    return axios.post("http://localhost:3001/api/challenge/", userData);
+    return axios.post("/api/app/challenge", userData);
   }
 };
 
