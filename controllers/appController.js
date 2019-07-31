@@ -262,10 +262,7 @@ module.exports = {
                 body.username = username
                 db.Comment.create(body).then(function (commentdb) {
                     console.log("okay")
-                    // res.send({
-                    //     redirect: "/challenge/" + GoalId
-                    // })
-                    //res.json(commentdb);
+                    res.status(200).json(commentdb);
 
                 })
             }

@@ -15,7 +15,8 @@ class Challenge extends React.Component {
         report: [],
         goal: {},
         progressperc: 0,
-        success:""
+        success:"",
+        value: ""
     };
     
     this.handleChange = this.handleChange.bind(this);
@@ -56,11 +57,14 @@ class Challenge extends React.Component {
         .catch(err => console.log(err));
   };
 
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
+  handleChange = name => (event) => {
+    console.log(event.target.value);
+    this.setState({
+        [name]: event.target.value,
+    });
+  }  
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
     // alert('A name was submitted: ' + this.state.value);
     console.log(this.props.match.params.id)
@@ -78,14 +82,18 @@ class Challenge extends React.Component {
         .then(res => {
 
             
-            let {data} = res
-            console.log(data)
-            this.setState({
-                comment : data.comment,
-                goal: data.goal,
-                report: data.report,
-                progressperc: data.progressperc
-            })
+            if(res.data.text === this.state.value){
+              this.setState({value: ''})
+              let goalID = this.props.match.params.id
+              const {user} = this.props.auth
+              this.goal(user.id,user.email,goalID)
+            }
+            // this.setState({
+            //     comment : data.comment,
+            //     goal: data.goal,
+            //     report: data.report,
+            //     progressperc: data.progressperc
+            // })
         }
         )
         .catch(err => console.log(err));
@@ -139,12 +147,12 @@ class Challenge extends React.Component {
           <MDBModalHeader toggle={this.toggle}>Report</MDBModalHeader>
           <MDBModalBody>
             <div className="custom-control custom-radio">
-                <input type="radio" className="custom-control-input" id="defaultGroupExample1"   onChange={this.handleChange} value="1" name="success" checked={this.state.success==='1'}/>
+                <input type="radio" className="custom-control-input" id="defaultGroupExample1"   onChange={this.handleChange('success')} value="1" name="success" checked={this.state.success==='1'}/>
                 <label className="custom-control-label" htmlFor="defaultGroupExample1">Successfull</label>
             </div>
 
             <div className="custom-control custom-radio">
-                <input type="radio" className="custom-control-input" id="defaultGroupExample2" onChange={this.handleChange} value="0" name="success" checked={this.state.success==='0'}/>
+                <input type="radio" className="custom-control-input" id="defaultGroupExample2" onChange={this.handleChange('success')} value="0" name="success" checked={this.state.success==='0'}/>
                 <label className="custom-control-label" htmlFor="defaultGroupExample2">Not Successfull</label>
             </div>
           </MDBModalBody>
@@ -219,7 +227,7 @@ class Challenge extends React.Component {
                             <form id="commentForm" onSubmit={this.handleSubmit}>
                                 <div className="form-group">
                                     <label htmlFor="comment">Comment : </label>
-                                    <textarea className="form-control" rows="2" id="comment" value={this.state.value} onChange={this.handleChange}></textarea>
+                                    <textarea className="form-control" rows="2" id="comment" value={this.state.value} onChange={this.handleChange('value')}></textarea>
                                     <input type="submit" className="btn btn-warning black-text" value="Submit" />
                                 </div>
                             </form>
