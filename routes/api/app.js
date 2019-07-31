@@ -5,4 +5,7 @@ const appController = require("../../controllers/appController");
 router.route("/dashboard")
 .get(appController.dashboard)
 
+router.route("/challenge")
+.get(appController.challenge)
+
 module.exports = router;

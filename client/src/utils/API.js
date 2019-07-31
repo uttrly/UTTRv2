@@ -13,5 +13,8 @@ export default {
   },
   dashboard: (id,email,status) => {
     return axios.get(`/api/app/dashboard?id=${id}&email=${email}&status=${status}`)
+  },
+  getGoalInfo: (id,email,goalId) => {
+    return axios.get(`/api/app/challenge?id=${id}&email=${email}&goalId=${goalId}`)
   }
 };

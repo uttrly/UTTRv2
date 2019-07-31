@@ -49,7 +49,7 @@ class App extends React.Component {
                 <Route exact path="/signin" component={Signin}/>
                 <Route exact path="/signup" component={Signup}/>
                 <PrivateRoute exact path="/dashboard" component={Dashboard}/>     
-                <PrivateRoute exact path="/challenge" component={Challenge}/>
+                <PrivateRoute exact path="/challenge/:id" component={Challenge}/>
                 <PrivateRoute exact path="/createGoal" component={CreateGoal} />  
                 <Route component={Err} />       
               </Switch>

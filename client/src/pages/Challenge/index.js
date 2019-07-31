@@ -1,16 +1,53 @@
 import React from 'react';
-import { MDBContainer, MDBRow, MDBCol, MDBBtn, } from 'mdbreact';
+import { MDBContainer, MDBRow, MDBCol, MDBBtn,MDBModal,MDBModalHeader,MDBModalBody,MDBModalFooter } from 'mdbreact';
 import '../pageStyle.css'
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import API from "../../utils/API";
 
 
 class Challenge extends React.Component {
   constructor(props){
     super(props)
     this.state = {
+        modal: false,
+        comment: [],
+        report: [],
+        goal: {}
     };
   }
+
+  toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+
+  componentDidMount() {
+    console.log(this.props.match.params.id)
+    
+    let goalID = this.props.match.params.id
+    const {user} = this.props.auth
+      this.goal(user.id,user.email,goalID)
+  }
+
+  goal = (id,email,goalID) => {
+    // console.log(header)
+    API.getGoalInfo(id,email,goalID)
+        .then(res => {
+
+            
+            let {data} = res
+            console.log(data)
+            this.setState({
+                comment : data.comment,
+                goal: data.goal,
+                report: data.report
+            })
+        }
+        )
+        .catch(err => console.log(err));
+  };
 
 
 
@@ -21,13 +58,26 @@ class Challenge extends React.Component {
       }
 
     const {user} = this.props.auth 
-
-
+    let {comment,goal,report} = this.state
+console.log(this.state)
       return(
+
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
+        <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
+          <MDBModalHeader toggle={this.toggle}>MDBModal title</MDBModalHeader>
+          <MDBModalBody>
+            (...)
+          </MDBModalBody>
+          <MDBModalFooter>
+            <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
+            <MDBBtn color="primary">Save changes</MDBBtn>
+          </MDBModalFooter>
+        </MDBModal>
+
+
             <div className="align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h3>Challenge : Run every day for atleast 10 minutes</h3>
-                <h6>Started on: 2019-05-02</h6>
+                <h3>Challenge : {goal.goalName}</h3>
+                <h6>Started on: {goal.startDate}</h6>
                 <div className="btn-toolbar mb-2 mb-md-0">
                 </div>
             </div>
@@ -37,7 +87,7 @@ class Challenge extends React.Component {
                     Description :
                 </div>
                 <div class="card-body">
-                    <p> This is where you will put the description for the goal. </p>
+                    <p> {goal.description}}</p>
                     <div class="progress">
                     <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style={style}> </div>
                     </div>
@@ -58,7 +108,7 @@ class Challenge extends React.Component {
                     </div>
                 </div>
                 <button type="button" class="btn btn-dark waves-effect waves-light" data-toggle="modal"
-                    data-target="#centralModalSm">Add a Report</button>
+                    data-target="#centralModalSm" onClick={this.toggle}>Add a Report</button>
 
             </div>
 
