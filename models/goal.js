@@ -8,18 +8,18 @@ module.exports = function (sequelize, DataTypes) {
         notEmpty: true,
       }
     },
-    duration: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
+    // duration: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: true
+    // },
 
-    startDate: {
-      type: DataTypes.DATEONLY,
-      allowNull: false,
-      validate: {
-        isDate: true
-      }
-    },
+    // startDate: {
+    //   type: DataTypes.DATEONLY,
+    //   allowNull: false,
+    //   validate: {
+    //     isDate: true
+    //   }
+    // },
     refereeEmail: {
       type: DataTypes.STRING,
       allowNull: false,
