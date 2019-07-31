@@ -1,6 +1,6 @@
-module.exports = function (sequelize, DataTypes) {
+module.exports = function(sequelize, DataTypes) {
   var Goal = sequelize.define("Goal", {
-    goal: {
+    goalName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -8,24 +8,39 @@ module.exports = function (sequelize, DataTypes) {
         notEmpty: true,
       }
     },
-    // duration: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: true
-    // },
-
-    // startDate: {
-    //   type: DataTypes.DATEONLY,
-    //   allowNull: false,
-    //   validate: {
-    //     isDate: true
-    //   }
-    // },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true,
+      }
+    },
+    oneTime: {
+      type: DataTypes.BOOLEAN, //0: false, 1: true
+      allowNull: false,
+      validate: {
+        notNull: true,
+        notEmpty: true
+      }
+    },
+    startDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+      validate: {
+        isDate: true
+      }
+    },
     refereeEmail: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         isEmail: true
       }
+    },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     points: {
       type: DataTypes.INTEGER,
@@ -50,20 +65,20 @@ module.exports = function (sequelize, DataTypes) {
       //   notNull: true,
       //   notEmpty: true
       // }
-    },
+    },    
   });
 
-  Goal.associate = function (models) {
+  Goal.associate = function(models) {
     Goal.belongsToMany(models.User, {
       through: {
         model: "userGoals",
         unique: false
       },
       foreignKey: "GoalId",
-    })
+    })  
   };
 
-  Goal.associate = function (models) {
+  Goal.associate = function(models) {
     Goal.hasMany(models.Comment);
     Goal.hasMany(models.Report);
   };

@@ -19,8 +19,8 @@ router.route("/user")
 // router.route("/createGoal")
 // .get(authController.createGoal)
 
-router.route("/api/challenge",)
-.post(appController.newChallenge)
+// router.route("/api/challenge",)
+// .post(appController.newChallenge)
 
 
 module.exports = router;
