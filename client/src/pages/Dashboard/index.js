@@ -101,7 +101,7 @@ class Dashboard extends React.Component {
                     </MDBCol>
 
                     <MDBCol lg="8" md="6">
-                        <div className="account-points-update panel panel-primary mouseover-animated-pulse click-animated-jello" style={style}>
+                        <div className="" style={{cursor: 'default'}}>
                             <div className="col-sm-12 text-center">
                                 <div><b>QUOTE OF THE DAY</b></div>
                                 <h6>"{this.state.quote.content}"</h6>
