@@ -7,6 +7,7 @@ router.route("/dashboard")
 
 router.route("/challenge")
 .get(appController.challenge)
+.post(appController.newChallenge)
 
 router.route("/comment")
 .post(appController.addComment)

@@ -1,10 +1,14 @@
 import React, { Component } from "react";
-import { MDBContainer, MDBRow, MDBCol } from "mdbreact";
+import { Redirect } from 'react-router-dom';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBInput, MDBBtn } from "mdbreact";
 import API from "../../utils/API.js";
 import '../pageStyle.css'
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-
+import { storage } from '../../firebase';
+import Validator from 'validator'
+import isEmpty from 'is-empty'
+import classnames from "classnames";
 
 class CreateGoal extends Component {
     constructor(props) {
@@ -12,102 +16,173 @@ class CreateGoal extends Component {
         this.state = {
             goal: '',
             refereeEmail: '',
-            // stake:""
+            stake: '',
+            errors: {},
+            done: false
         }
+
+
     }
     handleInputChange = name => (event) => {
         console.log(event.target.value);
-        let value = event.target.value;
-
         this.setState({
-            [name]: value,
+            [name]: event.target.value,
         });
     }
+    
     handleFormSubmit = event => {
         event.preventDefault()
         // event.preventDefault();
         const { user } = this.props.auth
-        console.log(user);
-
-        // let id = this.props.auth.id;
-        console.log("this works ----");
-
+        
         const userData = {
+            userId: user.id,
             goal: this.state.goal,
             refereeEmail: this.state.refereeEmail,
             stake: this.state.stake
         };
-
+        
         console.log(userData);
+        let validation = this.validation(userData)
+
+        console.log(validation)
+
+        if(!validation.isValid){
+            this.setState({errors: validation.errors})
+        }
 
         API.createGoal(userData)
-            .then(function (data) {
-                console.log("data ----- ", data);
+            .then((res) => {
+                console.log(res.data.message);
+                if (res.data.message === 'Goal sucessfully created.'){
+                    this.setState({done: true})
+                }
 
             })
             .catch(err => { console.log(" ERROR ------ ", err) })
     }
 
-    // uploadPhoto(event) {
-    //     event.preventDefault()
-    //     var photo = document.getElementById('stake').files[0]
-    //     var fileName = uuidv4()
-    //     var stakeStorage = defaultStorage.ref(fileName)
-    //     stakeStorage.put(photo).then(function () {
-    //         defaultStorage.ref().child(fileName).getDownloadURL().then(function (url) {
-    //             submitButton(url)
-    //         })
-    //     })
-    // }
+    uploadPhoto = (event) => {
+        event.preventDefault()
+        var photo = event.target.files[0]
+        var fileName = this.uuidv4()
+        var stakeStorage = storage.ref(fileName)
+        console.log('done')
+        stakeStorage.put(photo).then(() => {
+            storage.ref().child(fileName).getDownloadURL().then(url => {
+                this.setState({stake: url})
+            })
+        })
+    }
 
     //random keygen for file name
-    // uuidv4() {
-    //     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    //         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    //         return v.toString(16);
-    //     });
-    // }
+    uuidv4 = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
+    validation = (data) => {
+        let errors = {};
+        // Convert empty fields to an empty string so we can use validator functions
+        data.goal = !isEmpty(data.goal) ? data.goal : "";
+        data.refereeEmail = !isEmpty(data.refereeEmail) ? data.refereeEmail : "";
+        data.stake = !isEmpty(data.stake) ? data.stake : "";
+
+          if (Validator.isEmpty(data.refereeEmail)) {
+            errors.refereeEmail = "Referee email is required";
+          } else if (!Validator.isEmail(data.refereeEmail)) {
+            errors.refereeEmail = "Email is invalid";
+          }
+
+          if (Validator.isEmpty(data.goal)) {
+            errors.goal = "Goal is required";
+          }
+
+          if (Validator.isEmpty(data.stake)) {
+            errors.stake = "Stake photo is required";
+          }
+        
+        return {
+            errors,
+            isValid: isEmpty(errors)
+          };
+        
+    }
 
 
     render() {
 
-        const { user } = this.props.auth
+        if (this.state.done) {
+            return <Redirect to='/dashboard' />
+        }
+        const { errors } = this.state
 
         return (
 
-            <MDBContainer className="mt-5 pt-5 mainContainer">
+            <MDBContainer className="my-5 pt-5 mainContainer">
                 <MDBRow>
                     < MDBCol lg="10" className="mx-auto">
-                        <div class="card card-signin flex-row my-5">
-                            <div class="card-body">
+                        <MDBCard>
+                            <MDBCardBody>
                                 <h3 className="card-title text-center">Create a Challenge</h3>
-                                <form id="goalForm" >
-                                    <div>
-                                        <h5><i>Please follow the given format when filling out your goal </i></h5>
-                                        <p> My goal is to "title" for "duration" starting on "start date"</p>
-                                        <p> Example : My goal is to run everyday for 10 weeks starting on october 18, 2020. </p>
-
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label>Goal : </label>
-                                        <textarea onChange={this.handleInputChange("goal")} class="form-control" id="goal" Required placeholder="My goal is to run everyday for 10 weeks starting on october 18, 2020." Required></textarea>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="refereeEmail">Referee Email Address :</label>
-                                        <input onChange={this.handleInputChange("refereeEmail")} type="email" class="form-control" id="refEmail" aria-describedby="emailHelp" placeholder="Enter Referee Email" Required />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="stake">Stake :</label>
-                                        <input onChange={this.handleInputChange("stake")} type="file" accept="image/*" class="form-control" id="stake" Required />
-                                    </div>
-
-                                    <button type="submit" onClick={this.handleFormSubmit} class="btn btn-dark">Submit</button>
+                                <br></br>
+                                        <h5><i>Please follow the given format when filling out your goal.</i></h5>
+                                        <p> "Goal" for "duration" weeks starting "start date".</p>
+                                        <p> Example : Run everyday for 10 weeks starting October 18, 2019. </p>
+                                <form className="needs-validation" noValidate >
+                                    <MDBInput
+                                        className={classnames("", {invalid: errors.goal})}
+                                        group
+                                        icon="clipboard"
+                                        type="text" 
+                                        label="Your Goal" 
+                                        onChange={this.handleInputChange("goal")} 
+                                        id="goal"
+                                        required 
+                                        value={this.state.goal}
+                                    />
+                                    <small className="form-text red-text">{errors.goal}</small> 
+                                    <MDBInput
+                                        className={classnames("", {invalid: errors.refereeEmail})}
+                                        group
+                                        icon="envelope"
+                                        type="text" 
+                                        label="Referee's Email" 
+                                        onChange={this.handleInputChange("refereeEmail")} 
+                                        id="referee"
+                                        required 
+                                        value={this.state.refereeEmail}
+                                    />
+                                    <small className="form-text red-text">{errors.refereeEmail}</small>
+                                    <br />
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text" id="inputGroupFileAddon01">
+                                            Upload Stake
+                                            </span>
+                                        </div>
+                                        <div className="custom-file">
+                                            <input
+                                            type="file"
+                                            className="custom-file-input"
+                                            id="inputGroupFile01"
+                                            aria-describedby="inputGroupFileAddon01"
+                                            accept="image/*"
+                                            onChange={(event) => this.uploadPhoto(event)}
+                                            />
+                                            <label className="custom-file-label" htmlFor="inputGroupFile01">
+                                            no file chosen
+                                            </label>
+                                        </div>
+                                    </div>                                        
+                                    <small className="form-text red-text">{errors.stake}</small>
+                                    <br />
+                                    <MDBBtn color="yellow accent-3" type="submit" onClick={this.handleFormSubmit} className="black-text">Submit</MDBBtn>
                                 </form>
-                            </div>
-                        </div>
+                            </MDBCardBody>
+                        </MDBCard>
                     </MDBCol>
                 </MDBRow>
             </MDBContainer>

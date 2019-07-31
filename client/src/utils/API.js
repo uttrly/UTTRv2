@@ -35,7 +35,7 @@ export default {
   },
   createGoal: (userData) => {
     console.log("---- posted ----")
-    return axios.post("http://localhost:3001/api/challenge/", userData);
+    return axios.post("/api/app/challenge", userData);
   }
 };
 
