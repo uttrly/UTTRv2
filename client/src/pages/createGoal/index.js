@@ -29,33 +29,33 @@ class CreateGoal extends Component {
             [name]: event.target.value,
         });
     }
-    
+
     handleFormSubmit = event => {
         event.preventDefault()
         // event.preventDefault();
         const { user } = this.props.auth
-        
+
         const userData = {
             userId: user.id,
             goal: this.state.goal,
             refereeEmail: this.state.refereeEmail,
             stake: this.state.stake
         };
-        
+
         console.log(userData);
         let validation = this.validation(userData)
 
         console.log(validation)
 
-        if(!validation.isValid){
-            this.setState({errors: validation.errors})
+        if (!validation.isValid) {
+            this.setState({ errors: validation.errors })
         }
 
         API.createGoal(userData)
             .then((res) => {
                 console.log(res.data.message);
-                if (res.data.message === 'Goal sucessfully created.'){
-                    this.setState({done: true})
+                if (res.data.message === 'Goal sucessfully created.') {
+                    this.setState({ done: true })
                 }
 
             })
@@ -70,7 +70,7 @@ class CreateGoal extends Component {
         console.log('done')
         stakeStorage.put(photo).then(() => {
             storage.ref().child(fileName).getDownloadURL().then(url => {
-                this.setState({stake: url})
+                this.setState({ stake: url })
             })
         })
     }
@@ -90,25 +90,25 @@ class CreateGoal extends Component {
         data.refereeEmail = !isEmpty(data.refereeEmail) ? data.refereeEmail : "";
         data.stake = !isEmpty(data.stake) ? data.stake : "";
 
-          if (Validator.isEmpty(data.refereeEmail)) {
+        if (Validator.isEmpty(data.refereeEmail)) {
             errors.refereeEmail = "Referee email is required";
-          } else if (!Validator.isEmail(data.refereeEmail)) {
+        } else if (!Validator.isEmail(data.refereeEmail)) {
             errors.refereeEmail = "Email is invalid";
-          }
+        }
 
-          if (Validator.isEmpty(data.goal)) {
+        if (Validator.isEmpty(data.goal)) {
             errors.goal = "Goal is required";
-          }
+        }
 
-          if (Validator.isEmpty(data.stake)) {
+        if (Validator.isEmpty(data.stake)) {
             errors.stake = "Stake photo is required";
-          }
-        
+        }
+
         return {
             errors,
             isValid: isEmpty(errors)
-          };
-        
+        };
+
     }
 
 
@@ -128,31 +128,31 @@ class CreateGoal extends Component {
                             <MDBCardBody>
                                 <h3 className="card-title text-center">Create a Challenge</h3>
                                 <br></br>
-                                        <h5><i>Please follow the given format when filling out your goal.</i></h5>
-                                        <p> "Goal" for "duration" weeks starting "start date".</p>
-                                        <p> Example : Run everyday for 10 weeks starting October 18, 2019. </p>
+                                <h5><i>Please follow the given format when filling out your goal.</i></h5>
+                                <p> "Goal" for "duration" weeks starting "start date".</p>
+                                <p> Example : Run everyday for 10 weeks starting October 18, 2019. </p>
                                 <form className="needs-validation" noValidate >
                                     <MDBInput
-                                        className={classnames("", {invalid: errors.goal})}
+                                        className={classnames("", { invalid: errors.goal })}
                                         group
                                         icon="clipboard"
-                                        type="text" 
-                                        label="Your Goal" 
-                                        onChange={this.handleInputChange("goal")} 
+                                        type="text"
+                                        label="Your Goal"
+                                        onChange={this.handleInputChange("goal")}
                                         id="goal"
-                                        required 
+                                        required
                                         value={this.state.goal}
                                     />
-                                    <small className="form-text red-text">{errors.goal}</small> 
+                                    <small className="form-text red-text">{errors.goal}</small>
                                     <MDBInput
-                                        className={classnames("", {invalid: errors.refereeEmail})}
+                                        className={classnames("", { invalid: errors.refereeEmail })}
                                         group
                                         icon="envelope"
-                                        type="text" 
-                                        label="Referee's Email" 
-                                        onChange={this.handleInputChange("refereeEmail")} 
+                                        type="text"
+                                        label="Referee's Email"
+                                        onChange={this.handleInputChange("refereeEmail")}
                                         id="referee"
-                                        required 
+                                        required
                                         value={this.state.refereeEmail}
                                     />
                                     <small className="form-text red-text">{errors.refereeEmail}</small>
@@ -160,23 +160,23 @@ class CreateGoal extends Component {
                                     <div className="input-group">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text" id="inputGroupFileAddon01">
-                                            Upload Stake
+                                                Upload Stake
                                             </span>
                                         </div>
                                         <div className="custom-file">
                                             <input
-                                            type="file"
-                                            className="custom-file-input"
-                                            id="inputGroupFile01"
-                                            aria-describedby="inputGroupFileAddon01"
-                                            accept="image/*"
-                                            onChange={(event) => this.uploadPhoto(event)}
+                                                type="file"
+                                                className="custom-file-input"
+                                                id="inputGroupFile01"
+                                                aria-describedby="inputGroupFileAddon01"
+                                                accept="image/*"
+                                                onChange={(event) => this.uploadPhoto(event)}
                                             />
                                             <label className="custom-file-label" htmlFor="inputGroupFile01">
-                                            no file chosen
+                                                no file chosen
                                             </label>
                                         </div>
-                                    </div>                                        
+                                    </div>
                                     <small className="form-text red-text">{errors.stake}</small>
                                     <br />
                                     <MDBBtn color="yellow accent-3" type="submit" onClick={this.handleFormSubmit} className="black-text">Submit</MDBBtn>

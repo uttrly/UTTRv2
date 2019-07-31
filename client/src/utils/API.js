@@ -11,23 +11,23 @@ export default {
   search: (route, originStopId, destinationStopId, terminal, previous) => {
     return axios.get(`/api/app/search/${route}/${originStopId}/${destinationStopId}/${terminal}/${previous}`)
   },
-  dashboard: (id,email,status) => {
+  dashboard: (id, email, status) => {
     return axios.get(`/api/app/dashboard?id=${id}&email=${email}&status=${status}`)
   },
-  getGoalInfo: (id,email,goalId) => {
+  getGoalInfo: (id, email, goalId) => {
     return axios.get(`/api/app/challenge?id=${id}&email=${email}&goalId=${goalId}`)
   },
-  submitComment: (id,email,goalID,comment) => {
+  submitComment: (id, email, goalID, comment) => {
     return axios.post(`/api/app/comment`, {
-      id : id,
+      id: id,
       email: email,
       goalID: goalID,
       comment: comment
     })
   },
-  submitReport: (id,email,goalID,success) => {
+  submitReport: (id, email, goalID, success) => {
     return axios.post(`/api/app/report`, {
-      id : id,
+      id: id,
       email: email,
       goalID: goalID,
       success: success
@@ -35,7 +35,7 @@ export default {
   },
   createGoal: (userData) => {
     console.log("---- posted ----")
-    return axios.post("/api/app/challenge", userData);
+    return axios.post("/api/app/newChallenge", userData);
   }
 };
 
