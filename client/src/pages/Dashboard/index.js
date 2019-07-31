@@ -98,7 +98,7 @@ class Dashboard extends React.Component {
                     <button onClick={this.handleClick} className="btn btn-sm btn-outline" id="referee"><i className="far fa-eye"></i> Referee</button>
                 </div>
                 <div className="btn-group mr-2">
-                    <MDBBtn onClick={this.handleClick} className="btn btn-sm btn-outline" id="createGoal"><i className="far fa-plus-square"></i> Add New Goal</MDBBtn>
+                    <MDBBtn onClick={this.handleClick} small outline color="yellow accent-3" id="createGoal"><i className="far fa-plus-square"></i> Add New Goal</MDBBtn>
                 </div>
                 </div>
             </div>
