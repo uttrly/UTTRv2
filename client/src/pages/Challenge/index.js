@@ -13,8 +13,13 @@ class Challenge extends React.Component {
         modal: false,
         comment: [],
         report: [],
-        goal: {}
+        goal: {},
+        progressperc: 0,
+        success:""
     };
+    
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   toggle = () => {
@@ -33,6 +38,7 @@ class Challenge extends React.Component {
 
   goal = (id,email,goalID) => {
     // console.log(header)
+    console.log(goalID)
     API.getGoalInfo(id,email,goalID)
         .then(res => {
 
@@ -42,8 +48,74 @@ class Challenge extends React.Component {
             this.setState({
                 comment : data.comment,
                 goal: data.goal,
-                report: data.report
+                report: data.report,
+                progressperc: data.progressperc
             })
+        }
+        )
+        .catch(err => console.log(err));
+  };
+
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    // alert('A name was submitted: ' + this.state.value);
+    console.log(this.props.match.params.id)
+    
+    let goalID = this.props.match.params.id
+    const {user} = this.props.auth
+    this.submitComment(user.id,user.email,goalID,this.state.value)
+
+    
+  }
+
+  submitComment = (id,email,goalID,comment) => {
+    // console.log(header)
+    API.submitComment(id,email,goalID,comment)
+        .then(res => {
+
+            
+            let {data} = res
+            console.log(data)
+            this.setState({
+                comment : data.comment,
+                goal: data.goal,
+                report: data.report,
+                progressperc: data.progressperc
+            })
+        }
+        )
+        .catch(err => console.log(err));
+  };
+
+  handleChange(event) {
+    this.setState({
+      success: event.target.value
+    });
+
+  }
+
+  report = (event) => {
+    console.log(this.state.success)
+    event.preventDefault();
+    // alert('A name was submitted: ' + this.state.value);
+    console.log(this.state.success)
+    
+    let goalID = this.props.match.params.id
+    const {user} = this.props.auth
+    this.submitReport(user.id,user.email,goalID,this.state.success)
+  }
+
+  submitReport = (id,email,goalID,success) => {
+    // console.log(header)
+    API.submitReport(id,email,goalID,success)
+        .then(res => {
+        // console.log(res)
+        this.toggle()
+            
         }
         )
         .catch(err => console.log(err));
@@ -54,23 +126,31 @@ class Challenge extends React.Component {
   render() {
 
     let style = {
-        width:"70%"
+        width:this.state.progressperc + "%"
       }
 
     const {user} = this.props.auth 
     let {comment,goal,report} = this.state
-console.log(this.state)
+    console.log(this.state)
       return(
 
         <MDBContainer className="mt-5 pt-5 mainContainer text-dark">
         <MDBModal isOpen={this.state.modal} toggle={this.toggle}>
-          <MDBModalHeader toggle={this.toggle}>MDBModal title</MDBModalHeader>
+          <MDBModalHeader toggle={this.toggle}>Report</MDBModalHeader>
           <MDBModalBody>
-            (...)
+            <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" id="defaultGroupExample1"   onChange={this.handleChange} value="1" name="success" checked={this.state.success==='1'}/>
+                <label class="custom-control-label" for="defaultGroupExample1">Successfull</label>
+            </div>
+
+            <div class="custom-control custom-radio">
+                <input type="radio" class="custom-control-input" id="defaultGroupExample2" onChange={this.handleChange} value="0" name="success" checked={this.state.success==='0'}/>
+                <label class="custom-control-label" for="defaultGroupExample2">Not Successfull</label>
+            </div>
           </MDBModalBody>
           <MDBModalFooter>
             <MDBBtn color="secondary" onClick={this.toggle}>Close</MDBBtn>
-            <MDBBtn color="primary">Save changes</MDBBtn>
+            <MDBBtn color="primary" onClick={this.report}>Save changes</MDBBtn>
           </MDBModalFooter>
         </MDBModal>
 
@@ -87,7 +167,7 @@ console.log(this.state)
                     Description :
                 </div>
                 <div class="card-body">
-                    <p> {goal.description}}</p>
+                    <p> {goal.description}</p>
                     <div class="progress">
                     <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style={style}> </div>
                     </div>
@@ -99,16 +179,23 @@ console.log(this.state)
                 <div class="card-header">
                     Report :
                 </div>
-                <div class="card-body">
-                    <div class="card mb-3">
+                {report.map(item => 
                     <div class="card-body">
-                        <h6>Week: 1</h6>
-                        <p>successfull</p>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>Week: {item.week}</h6>
+                                <p>{item.successfull ? "Successful" : "Unsuccessful"}</p>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
+                )}
+
+                {goal.refereeEmail === user.email ? (
                 <button type="button" class="btn btn-dark waves-effect waves-light" data-toggle="modal"
                     data-target="#centralModalSm" onClick={this.toggle}>Add a Report</button>
+                ) : (
+                    ""
+                )}
 
             </div>
 
@@ -117,15 +204,23 @@ console.log(this.state)
                     <div class="card-header"> Comments : </div>
                     <div class="card-body">
                         <div class="list-group-item list-group-item-action flex-column align-items-start">
-                            <p>WHAT!!!!</p>
-                            <small> Added by : bob </small> <br></br>
-                            <small> Created at : today </small>
+
+                            {comment.map(item =>
+                            <>
+                                <p className="mt-3">{item.text}</p>
+                                <small> Added by : {item.username} </small> 
+                                <br></br>
+                                <small> Created at : {item.createdAt} </small>
+                                </>
+                            )}
+
                             <br></br>
-                            <form id="commentForm">
+
+                            <form id="commentForm" onSubmit={this.handleSubmit}>
                                 <div class="form-group">
                                     <label for="comment">Comment : </label>
-                                    <textarea class="form-control" rows="2" id="comment"></textarea>
-                                    <button type="submit" class="btn btn-dark" id="submit">Submit</button>
+                                    <textarea class="form-control" rows="2" id="comment" value={this.state.value} onChange={this.handleChange}></textarea>
+                                    <input type="submit" class="btn btn-dark" value="Submit" />
                                 </div>
                             </form>
                         </div>

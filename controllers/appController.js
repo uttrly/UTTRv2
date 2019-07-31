@@ -6,7 +6,6 @@ const client = new SparkPost("2b862987dfc382161bbc77bf1bf8d6773db93dba");
 
 const APIAI_TOKEN = process.env.APIAI_TOKEN;
 const APIAI_SESSION_ID = process.env.APIAI_SESSION_ID;
-
 const apiai = require('apiai')(APIAI_TOKEN);
 
 // Defining methods for the appController
@@ -106,7 +105,9 @@ module.exports = {
 
 
     challenge: (req, res) => {
-        var goalId = req.query.id
+        var goalId = req.query.goalId
+
+        console.log(res.query)
         console.log("/challenge/:id gets rendered")
         db.Goal.findAll({
             where: {
@@ -158,7 +159,8 @@ module.exports = {
                     id: data[0].id,
                     goalName: data[0].goalName,
                     description: data[0].description,
-                    startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, '')
+                    startDate: startDate.toISOString().replace(/T/, " ").replace(/\..+/, '').replace(/\d\d:\d\d:\d\d/, ''),
+                    refereeEmail: data[0].refereeEmail
                 },
                 report,
                 // comment,
@@ -236,6 +238,146 @@ module.exports = {
     },
     newChallenge: (req, res) => {
         nlp(req, res)
+    },
+    addComment: (req, res) => {
+        // return(console.log(req.body))
+        console.log(req.body)
+        var GoalId = req.body.goalID;
+
+        console.log(GoalId)
+        var username = req.body.email
+        var body = {
+            text: req.body.comment,
+            username: username,
+            GoalId: GoalId
+        }
+
+        db.Goal.findOne({
+            where: {
+                id: GoalId
+            }
+        }).then(function (data) {
+            console.log(data);
+            if (data !== "" || data !== null) {
+                body.username = username
+                db.Comment.create(body).then(function (commentdb) {
+                    console.log("okay")
+                    // res.send({
+                    //     redirect: "/challenge/" + GoalId
+                    // })
+                    //res.json(commentdb);
+
+                })
+            }
+
+        })
+    },
+    report: (req, res) => {
+        // return(console.log(req.body))
+        var userId = req.body.id
+        var userEmail = req.body.email
+        var success = req.body.success
+        var goalId = req.body.goalID
+        var authorType = 1
+    
+        db.Goal.findOne({
+            where: {
+                refereeEmail: userEmail,
+                id: goalId
+            }
+        }).then(function (data) {
+            console.log(data)
+    
+            var week = calculateWeek(data.startDate)
+            var duration = data.duration
+            var points = data.points
+            var oneTime = data.oneTime
+    
+            if (oneTime == 1) {
+                week = 1
+            }
+    
+            var report = {
+                sucess: success,
+                authorType: authorType,
+                userId: userId,
+                week: week,
+                GoalId: goalId
+            }
+    
+    
+    
+            if (data !== "" || data !== null) {
+                if (success == "1") {
+                    db.Goal.update({
+                        points: points + 7,
+                    }, {
+                            where: {
+                                id: goalId
+                            },
+                            returning: true,
+                            plain: true
+                        })
+                        .then(function (result) {
+                            console.log("updated")
+                            console.log(result);
+    
+                        });
+                }
+    
+    
+    
+                db.Report.create(report).then(function () {
+    
+                    if (week == duration || oneTime == 1) {
+                        db.Report.findAll({
+                            attributes:
+                                ['sucess'],
+    
+                            where: {
+                                GoalId: goalId
+                            }, raw: true
+                        }).then(function (data) {
+                            console.log(data)
+                            if (oneTime == 1) {
+                                duration = 1
+                            }
+                            var totalSuccess = 0;
+                            var overallPer = 0;
+                            for (var i = 0; i < data.length; i++) {
+                                currentSuccess = data[i].sucess
+                                if (currentSuccess == 1) {
+                                    totalSuccess += currentSuccess
+                                }
+                            }
+    
+                            overallPer = parseInt(totalSuccess) / parseInt(duration) * 100
+    
+                            console.log("overall" + overallPer)
+    
+                            if (overallPer < 80) {
+                                console.log("Sending out email")
+                                sendEmail.emailQueryUponFail(goalId)
+                            }
+    
+                            db.Goal.update({
+                                status: 1,
+                            }, {
+                                    where: {
+                                        id: goalId
+                                    },
+                                    returning: true,
+                                    plain: true
+                                })
+                        });
+    
+                    }
+                    res.send({
+                        redirect: "/challenge/" + goalId
+                    })
+                })
+            }
+        });
     }
 };
 
@@ -272,7 +414,6 @@ const nlp = (req, res) => {
 
 }
 
-
 const createGoalDB = (newGoal, req, res) => {
     console.log(newGoal)
     db.Goal.create(newGoal)
@@ -294,141 +435,6 @@ const createGoalDB = (newGoal, req, res) => {
     })
     
 }
-
-const report = (req, res) => {
-    var userId = req.user.id
-    var userEmail = req.user.email
-    var success = req.body.success
-    var goalId = req.body.goalId
-    var authorType = 1
-
-    db.Goal.findOne({
-        where: {
-            refereeEmail: userEmail,
-            id: goalId
-        }
-    }).then(function (data) {
-        console.log(data)
-
-        var week = calculateWeek(data.startDate)
-        var duration = data.duration
-        var points = data.points
-        var oneTime = data.oneTime
-
-        if (oneTime == 1) {
-            week = 1
-        }
-
-        var report = {
-            sucess: success,
-            authorType: authorType,
-            userId: userId,
-            week: week,
-            GoalId: goalId
-        }
-
-
-
-        if (data !== "" || data !== null) {
-            if (success == "1") {
-                db.Goal.update({
-                    points: points + 7,
-                }, {
-                        where: {
-                            id: goalId
-                        },
-                        returning: true,
-                        plain: true
-                    })
-                    .then(function (result) {
-                        console.log("updated")
-                        console.log(result);
-
-                    });
-            }
-
-
-
-            db.Report.create(report).then(function () {
-
-                if (week == duration || oneTime == 1) {
-                    db.Report.findAll({
-                        attributes:
-                            ['sucess'],
-
-                        where: {
-                            GoalId: goalId
-                        }, raw: true
-                    }).then(function (data) {
-                        console.log(data)
-                        if (oneTime == 1) {
-                            duration = 1
-                        }
-                        var totalSuccess = 0;
-                        var overallPer = 0;
-                        for (var i = 0; i < data.length; i++) {
-                            currentSuccess = data[i].sucess
-                            if (currentSuccess == 1) {
-                                totalSuccess += currentSuccess
-                            }
-                        }
-
-                        overallPer = parseInt(totalSuccess) / parseInt(duration) * 100
-
-                        console.log("overall" + overallPer)
-
-                        if (overallPer < 80) {
-                            console.log("Sending out email")
-                            sendEmail.emailQueryUponFail(goalId)
-                        }
-
-                        db.Goal.update({
-                            status: 1,
-                        }, {
-                                where: {
-                                    id: goalId
-                                },
-                                returning: true,
-                                plain: true
-                            })
-                    });
-
-                }
-                res.send({
-                    redirect: "/challenge/" + goalId
-                })
-            })
-        }
-    });
-}
-
-// ========================== comment =====================
-const addComment = (req, res) => {
-    var GoalId = req.body.GoalId;
-    var username = req.user.username
-    var body = req.body
-
-    db.Goal.findOne({
-        where: {
-            id: GoalId
-        }
-    }).then(function (data) {
-        console.log(data);
-        if (data !== "" || data !== null) {
-            body.username = username
-            db.Comment.create(body).then(function (commentdb) {
-                res.send({
-                    redirect: "/challenge/" + GoalId
-                })
-                //res.json(commentdb);
-
-            })
-        }
-
-    })
-}
-// end =========================================================
-
 
 const addRefToUserGoals = (req, res, next) => {
     console.log("adding ref to user")
