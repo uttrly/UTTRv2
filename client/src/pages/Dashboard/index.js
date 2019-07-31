@@ -11,13 +11,23 @@ class Dashboard extends React.Component {
         this.state = {
             goal: [],
             point: 0,
-            owner: 1
+            owner: 1,
+            quote: {}
+
         };
     }
     componentDidMount() {
         const { user } = this.props.auth
-        this.dashboard(user.id, user.email, "")
+        this.dashboard(user.id, user.email, "");
+        this.quoteOfDay();
+
     }
+
+    quoteOfDay() {
+        API.quote()
+            .then(res => this.setState({ quote: res.data }, console.log(res.data)))
+            .catch(err => console.log(err));
+    };
 
 
     dashboard = (id, email, status) => {
@@ -86,6 +96,16 @@ class Dashboard extends React.Component {
                                     </div>
 
                                 </div>
+                            </div>
+                        </div>
+                    </MDBCol>
+
+                    <MDBCol lg="8" md="6">
+                        <div className="account-points-update panel panel-primary mouseover-animated-pulse click-animated-jello" style={style}>
+                            <div className="col-sm-12 text-center">
+                                <div><b>QUOTE OF THE DAY</b></div>
+                                <h6>"{this.state.quote.content}"</h6>
+                                <p> - {this.state.quote.author}</p>
                             </div>
                         </div>
                     </MDBCol>

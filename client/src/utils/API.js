@@ -1,6 +1,14 @@
 import axios from "axios";
+const BASEURL = "https://api.quotable.io/random";
+
 
 export default {
+
+
+  quote: function () {
+    return axios.get(BASEURL);
+  },
+
   // Gets all bus near geolocation
   getAllBuses: (lat, lon) => {
     return axios.get(`/api/bus/latlon/${lat}/${lon}`);
